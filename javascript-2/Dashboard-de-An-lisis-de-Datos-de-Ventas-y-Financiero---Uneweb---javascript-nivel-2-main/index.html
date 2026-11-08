@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero y de Ventas - JavaScript Nivel 2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#111827',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        brand: {
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                            violet: '#8b5cf6',
+                            rose: '#f43f5e',
+                            amber: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080d1a;
+            color: #f3f4f6;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-input {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+        .glass-input:focus {
+            border-color: #06b6d4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.25);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12 antialiased">
+
+    <!-- Header Principal -->
+    <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-xl shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid fa-chart-line text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-xl font-bold tracking-tight text-white">Sales & Financial Analytics</h1>
+                            <span class="px-2.5 py-0.5 text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full">JS Level 2</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Demostración práctica: Objetos, Arrays, Métodos Funcionales y DOM</p>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción Global -->
+                <div class="flex items-center space-x-3">
+                    <button id="btn-seed" class="px-3.5 py-2 text-xs font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg border border-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left text-cyan-400"></i> Restaurar Datos
+                    </button>
+                    <button id="btn-toggle-code" class="px-3.5 py-2 text-xs font-medium text-cyan-300 bg-cyan-950/60 hover:bg-cyan-900/80 rounded-lg border border-cyan-800/60 transition flex items-center gap-2">
+                        <i class="fa-solid fa-code text-cyan-400"></i> <span id="code-toggle-text">Ver Guía Pedagógica</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+
+        <!-- Banner Educativo Desplegable -->
+        <section id="pedagogical-guide" class="hidden glass-card rounded-2xl p-6 border-l-4 border-l-cyan-500 transition-all duration-300">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center gap-2 text-cyan-400 font-semibold">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    <h2>Conceptos Clave de JavaScript Nivel 2 Aplicados</h2>
+                </div>
+                <button id="btn-close-guide" class="text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300">
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="font-bold text-emerald-400 block mb-1">1. Métodos de Arrays Avanzados</span>
+                    <p class="text-slate-400">Uso de <code class="text-cyan-300">reduce()</code> para calcular acumulados de ingresos y mapas de frecuencia, <code class="text-cyan-300">filter()</code> para búsquedas de texto y categorías, y <code class="text-cyan-300">map()</code> para renderizado fluido.</p>
+                </div>
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="font-bold text-violet-400 block mb-1">2. Manipulación de Objetos</span>
+                    <p class="text-slate-400">Uso de <code class="text-violet-300">Object.entries()</code> y <code class="text-violet-300">Object.keys()</code> para transformar acumuladores por categoría en estructuras navegables en tarjetas de rendimiento.</p>
+                </div>
+                <div class="bg-slate-900/60 p-3.5 rounded-xl border border-slate-800">
+                    <span class="font-bold text-cyan-400 block mb-1">3. DOM Dinámico & LocalStorage</span>
+                    <p class="text-slate-400">Creación iterativa de elementos con <code class="text-cyan-300">document.createElement()</code>, delegación de eventos y sincronización en tiempo real con <code class="text-cyan-300">localStorage</code>.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secciones de Tarjetas KPI Dinámicas -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="kpi-cards-container">
+            <!-- Total Ingresos Card -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-emerald-500/40 transition duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Ingresos</span>
+                    <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 id="kpi-total-ingresos" class="text-2xl font-extrabold text-white">$0.00</h3>
+                    <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                        <span id="kpi-count-transacciones" class="text-emerald-400 font-semibold">0</span> transacciones registradas
+                    </p>
+                </div>
+            </div>
+
+            <!-- Promedio de Venta Card -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-cyan-500/40 transition duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl group-hover:bg-cyan-500/20 transition"></div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Promedio de Venta</span>
+                    <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 id="kpi-promedio-venta" class="text-2xl font-extrabold text-white">$0.00</h3>
+                    <p class="text-xs text-slate-400 mt-1">Por ticket de venta</p>
+                </div>
+            </div>
+
+            <!-- Producto Más Vendido Card -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-violet-500/40 transition duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-violet-500/10 rounded-full blur-xl group-hover:bg-violet-500/20 transition"></div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Producto Top (Frecuencia)</span>
+                    <div class="p-2 rounded-lg bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 id="kpi-producto-top" class="text-xl font-bold text-white truncate">N/A</h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        <span id="kpi-producto-top-count" class="text-violet-400 font-semibold">0</span> ventas realizadas
+                    </p>
+                </div>
+            </div>
+
+            <!-- Categoría Líder Card -->
+            <div class="glass-card rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/40 transition duration-300">
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition"></div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Categoría Top ($)</span>
+                    <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 id="kpi-categoria-top" class="text-xl font-bold text-white truncate">N/A</h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Ingreso: <span id="kpi-categoria-top-monto" class="text-amber-400 font-semibold">$0.00</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fila Principal: Formulario + Filtros & Controles -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Columna Izquierda: Formulario para Agregar Venta (4 cols) -->
+            <section class="lg:col-span-4">
+                <div class="glass-card rounded-2xl p-6 sticky top-24">
+                    <div class="flex items-center gap-2 mb-5">
+                        <i class="fa-solid fa-plus-circle text-cyan-400 text-lg"></i>
+                        <h2 class="text-base font-bold text-white">Registrar Nueva Venta</h2>
+                    </div>
+
+                    <form id="form-nueva-venta" class="space-y-4">
+                        <div>
+                            <label for="input-producto" class="block text-xs font-semibold text-slate-300 mb-1">Nombre del Producto</label>
+                            <input type="text" id="input-producto" required placeholder="Ej: Monitor Gamer 27''" 
+                                   class="w-full rounded-xl px-3.5 py-2.5 text-sm glass-input">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="select-categoria" class="block text-xs font-semibold text-slate-300 mb-1">Categoría</label>
+                                <select id="select-categoria" required class="w-full rounded-xl px-3 py-2.5 text-sm glass-input bg-slate-900">
+                                    <option value="Electrónica">Electrónica</option>
+                                    <option value="Ropa">Ropa</option>
+                                    <option value="Hogar">Hogar</option>
+                                    <option value="Alimentos">Alimentos</option>
+                                    <option value="Servicios">Servicios</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="input-monto" class="block text-xs font-semibold text-slate-300 mb-1">Monto ($)</label>
+                                <input type="number" id="input-monto" step="0.01" min="0.01" required placeholder="0.00" 
+                                       class="w-full rounded-xl px-3 py-2.5 text-sm glass-input">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="input-fecha" class="block text-xs font-semibold text-slate-300 mb-1">Fecha</label>
+                                <input type="date" id="input-fecha" required class="w-full rounded-xl px-3 py-2.5 text-sm glass-input">
+                            </div>
+                            <div>
+                                <label for="input-cliente" class="block text-xs font-semibold text-slate-300 mb-1">Cliente</label>
+                                <input type="text" id="input-cliente" required placeholder="Nombre cliente" 
+                                       class="w-full rounded-xl px-3 py-2.5 text-sm glass-input">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-cyan-500/25 transition duration-200 flex items-center justify-center gap-2 mt-2">
+                            <i class="fa-solid fa-check"></i> Guardar Transacción
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Columna Derecha: Filtros, Tabla y Análisis de Categorías (8 cols) -->
+            <section class="lg:col-span-8 space-y-6">
+                
+                <!-- Barra de Filtros y Búsqueda -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-cyan-400"></i> Filtros de Datos
+                        </h2>
+                        <span id="resultados-count" class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                            Mostrando 0 registros
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <!-- Búsqueda por Nombre -->
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                            <input type="text" id="filtro-busqueda" placeholder="Buscar producto o cliente..." 
+                                   class="w-full pl-9 pr-3 py-2 text-xs rounded-xl glass-input">
+                        </div>
+
+                        <!-- Filtro Categoría -->
+                        <div>
+                            <select id="filtro-categoria" class="w-full py-2 px-3 text-xs rounded-xl glass-input bg-slate-900">
+                                <option value="TODAS">Todas las Categorías</option>
+                                <option value="Electrónica">Electrónica</option>
+                                <option value="Ropa">Ropa</option>
+                                <option value="Hogar">Hogar</option>
+                                <option value="Alimentos">Alimentos</option>
+                                <option value="Servicios">Servicios</option>
+                            </select>
+                        </div>
+
+                        <!-- Ordenar Por -->
+                        <div>
+                            <select id="filtro-orden" class="w-full py-2 px-3 text-xs rounded-xl glass-input bg-slate-900">
+                                <option value="reciente">Fecha: Más Reciente</option>
+                                <option value="antiguo">Fecha: Más Antiguo</option>
+                                <option value="monto-desc">Monto: Mayor a Menor</option>
+                                <option value="monto-asc">Monto: Menor a Mayor</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Dinámica de Transacciones -->
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+                    <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/40">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-table-list text-cyan-400"></i> Registro de Ventas
+                        </h3>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900/80 uppercase tracking-wider text-slate-400 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-3 px-4">Fecha</th>
+                                    <th class="py-3 px-4">Producto</th>
+                                    <th class="py-3 px-4">Categoría</th>
+                                    <th class="py-3 px-4">Cliente</th>
+                                    <th class="py-3 px-4 text-right">Monto</th>
+                                    <th class="py-3 px-4 text-center">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-ventas-body" class="divide-y divide-slate-800/60 font-medium">
+                                <!-- Filas generadas dinámicamente con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Estado Vacío -->
+                    <div id="empty-state" class="hidden text-center py-12 px-4">
+                        <div class="inline-flex p-4 rounded-full bg-slate-800/80 text-slate-500 mb-3">
+                            <i class="fa-solid fa-inbox text-2xl"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-300">No se encontraron transacciones</p>
+                        <p class="text-xs text-slate-500 mt-1">Prueba cambiando los filtros o agregando un nuevo registro.</p>
+                    </div>
+                </div>
+
+                <!-- Desglose Por Categorías (Demostración de Object.entries y reduce) -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-violet-400"></i> Distribución de Ventas por Categoría
+                        </h3>
+                        <span class="text-xs text-slate-400">Generado dinámicamente con Object.entries()</span>
+                    </div>
+                    <div id="categoria-breakdown-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Tarjetas de Categorías generadas vía JS -->
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Notificaciones Toast -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- CÓDIGO JAVASCRIPT PRINCIPAL -->
+    <script>
+        /**
+         * ====================================================================
+         * JAVASCRIPT NIVEL 2 - DASHBOARD DE VENTAS & FINANZAS
+         * ====================================================================
+         * Este script implementa todos los conceptos del syllabus:
+         * 1. Objetos Literales, Constructores y Manipulación.
+         * 2. Métodos Avanzados de Arrays: map(), filter(), reduce(), sort().
+         * 3. Uso de Funciones Flecha y Callbacks.
+         * 4. Manipulación Avanzada del DOM (createElement, appendChild, removeChild).
+         * 5. Almacenamiento Persistente mediante LocalStorage.
+         */
+
+        // ==========================================
+        // 1. ESTADO DE LA APLICACIÓN & DATOS DE MUESTRA
+        // ==========================================
+
+        /**
+         * Datos de muestra iniciales (Estructura: Array de Objetos)
+         */
+        const DATOS_EJEMPLO = [
+            { id: "tx-101", producto: "Laptop Pro 15''", categoria: "Electrónica", monto: 1250.00, fecha: "2026-03-10", cliente: "Carlos Mendoza" },
+            { id: "tx-102", producto: "Camisa Formal Slim", categoria: "Ropa", monto: 45.50, fecha: "2026-03-11", cliente: "Ana Gómez" },
+            { id: "tx-103", producto: "Cafetera Expresso", categoria: "Hogar", monto: 180.00, fecha: "2026-03-12", cliente: "Roberto Silva" },
+            { id: "tx-104", producto: "Monitor Gamer 27''", categoria: "Electrónica", monto: 320.00, fecha: "2026-03-14", cliente: "Lucía Fernández" },
+            { id: "tx-105", producto: "Consultoría IT (1h)", categoria: "Servicios", monto: 90.00, fecha: "2026-03-15", cliente: "Tech Solutions" },
+            { id: "tx-106", producto: "Set de Cuchillos Cocina", categoria: "Hogar", monto: 65.00, fecha: "2026-03-16", cliente: "Mariana López" },
+            { id: "tx-107", producto: "Laptop Pro 15''", categoria: "Electrónica", monto: 1250.00, fecha: "2026-03-18", cliente: "Empresa Global" },
+            { id: "tx-108", producto: "Paquete Snacks Gourmet", categoria: "Alimentos", monto: 28.00, fecha: "2026-03-19", cliente: "David Ruiz" }
+        ];
+
+        // Estado Global con persitencia en localStorage
+        let transacciones = cargarTransacciones();
+
+        // ==========================================
+        // 2. FUNCIONES DE PERSISTENCIA (LOCALSTORAGE)
+        // ==========================================
+
+        /**
+         * Obtiene las transacciones guardadas en localStorage o retorna los datos de ejemplo
+         */
+        function cargarTransacciones() {
+            const guardado = localStorage.getItem('js_nivel2_ventas');
+            if (guardado) {
+                try {
+                    return JSON.parse(guardado);
+                } catch (e) {
+                    console.error("Error al parsear LocalStorage:", e);
+                    return [...DATOS_EJEMPLO];
+                }
+            }
+            return [...DATOS_EJEMPLO];
+        }
+
+        /**
+         * Guarda el array actual de transacciones en localStorage
+         */
+        const guardarEnLocalStorage = () => {
+            localStorage.setItem('js_nivel2_ventas', JSON.stringify(transacciones));
+        };
+
+        // ==========================================
+        // 3. MÉTODOS DE ARRAYS & LÓGICA FINANCIERA
+        // ==========================================
+
+        /**
+         * Calcula las métricas generales utilizando exclusivamente métodos avanzadas de Array
+         * @param {Array} lista - Lista de transacciones filtradas o totales
+         * @returns {Object} Objeto con los indicadores clave
+         */
+        const calcularMetricas = (lista) => {
+            if (lista.length === 0) {
+                return { total: 0, promedio: 0, productoTop: "N/A", productoTopCount: 0, catTop: "N/A", catTopMonto: 0 };
+            }
+
+            // A) TOTAL INGRESOS: Uso de reduce() para sumar los montos
+            const total = lista.reduce((acumulador, tx) => acumulador + parseFloat(tx.monto), 0);
+
+            // B) PROMEDIO DE VENTA: División entre total y la longitud del array
+            const promedio = total / lista.length;
+
+            // C) PRODUCTO MÁS VENDIDO (Frecuencia): Uso de reduce() con un objeto acumulador
+            const conteoProductos = lista.reduce((acc, tx) => {
+                acc[tx.producto] = (acc[tx.producto] || 0) + 1;
+                return acc;
+            }, {});
+
+            // Determinar cuál clave (producto) tiene la mayor frecuencia mediante Object.entries()
+            let productoTop = "N/A";
+            let productoTopCount = 0;
+            
+            Object.entries(conteoProductos).forEach(([prod, count]) => {
+                if (count > productoTopCount) {
+                    productoTopCount = count;
+                    productoTop = prod;
+                }
+            });
+
+            // D) CATEGORÍA LÍDER EN INGRESOS: Uso de reduce() agregando montos por categoría
+            const ingresosPorCategoria = lista.reduce((acc, tx) => {
+                acc[tx.categoria] = (acc[tx.categoria] || 0) + parseFloat(tx.monto);
+                return acc;
+            }, {});
+
+            let catTop = "N/A";
+            let catTopMonto = 0;
+
+            Object.entries(ingresosPorCategoria).forEach(([cat, monto]) => {
+                if (monto > catTopMonto) {
+                    catTopMonto = monto;
+                    catTop = cat;
+                }
+            });
+
+            return { total, promedio, productoTop, productoTopCount, catTop, catTopMonto, ingresosPorCategoria };
+        };
+
+        /**
+         * Filtra y ordena la lista de transacciones según la configuración del usuario
+         */
+        const obtenerTransaccionesFiltradas = () => {
+            const busqueda = document.getElementById('filtro-busqueda').value.toLowerCase().trim();
+            const categoria = document.getElementById('filtro-categoria').value;
+            const orden = document.getElementById('filtro-orden').value;
+
+            // 1. Filtrado combinado (filter)
+            let resultado = transacciones.filter(tx => {
+                const coincideTexto = tx.producto.toLowerCase().includes(busqueda) || 
+                                       tx.cliente.toLowerCase().includes(busqueda);
+                const coincideCat = (categoria === 'TODAS') || (tx.categoria === categoria);
+                return coincideTexto && coincideCat;
+            });
+
+            // 2. Ordenamiento (sort)
+            resultado.sort((a, b) => {
+                if (orden === 'reciente') return new Date(b.fecha) - new Date(a.fecha);
+                if (orden === 'antiguo') return new Date(a.fecha) - new Date(b.fecha);
+                if (orden === 'monto-desc') return b.monto - a.monto;
+                if (orden === 'monto-asc') return a.monto - b.monto;
+                return 0;
+            });
+
+            return resultado;
+        };
+
+        // ==========================================
+        // 4. MANIPULACIÓN Y RENDERIZADO DEL DOM
+        // ==========================================
+
+        /**
+         * Formatea números a moneda USD
+         */
+        const formatearMoneda = (valor) => {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(valor);
+        };
+
+        /**
+         * Renderiza las Tarjetas KPI principales
+         */
+        const renderizarKPIs = (metricas, countTotal) => {
+            document.getElementById('kpi-total-ingresos').textContent = formatearMoneda(metricas.total);
+            document.getElementById('kpi-count-transacciones').textContent = countTotal;
+            document.getElementById('kpi-promedio-venta').textContent = formatearMoneda(metricas.promedio);
+            
+            document.getElementById('kpi-producto-top').textContent = metricas.productoTop;
+            document.getElementById('kpi-producto-top-count').textContent = metricas.productoTopCount;
+
+            document.getElementById('kpi-categoria-top').textContent = metricas.catTop;
+            document.getElementById('kpi-categoria-top-monto').textContent = formatearMoneda(metricas.catTopMonto);
+        };
+
+        /**
+         * Genera dinámicamente las filas de la tabla mediante document.createElement()
+         */
+        const renderizarTabla = (lista) => {
+            const tbody = document.getElementById('tabla-ventas-body');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Limpiar contenido previo del tbody
+            tbody.innerHTML = '';
+
+            if (lista.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Badge de colores para las categorías
+            const BadgesCategoria = {
+                'Electrónica': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+                'Ropa': 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+                'Hogar': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                'Alimentos': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                'Servicios': 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+            };
+
+            // Iteración con map / forEach para la creación de elementos DOM
+            lista.forEach((tx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/40 transition duration-150 group';
+
+                const badgeClass = BadgesCategoria[tx.categoria] || 'bg-slate-700 text-slate-300';
+
+                // Inserción modular del HTML interno
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-slate-400 whitespace-nowrap">${tx.fecha}</td>
+                    <td class="py-3 px-4 font-semibold text-white">${tx.producto}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-1 text-[10px] font-semibold rounded-md border ${badgeClass}">
+                            ${tx.categoria}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-slate-300">${tx.cliente}</td>
+                    <td class="py-3 px-4 font-bold text-right text-emerald-400">${formatearMoneda(tx.monto)}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button class="btn-eliminar p-1.5 text-slate-500 hover:text-rose-400 transition" 
+                                data-id="${tx.id}" title="Eliminar transacción">
+                            <i class="fa-solid fa-trash-can pointer-events-none"></i>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            // Actualizar contador
+            document.getElementById('resultados-count').textContent = `Mostrando ${lista.length} de ${transacciones.length} registros`;
+        };
+
+        /**
+         * Genera las tarjetas de resumen por categoría utilizando Object.entries() y reduce()
+         */
+        const renderizarDesgloseCategorias = (metricasGlobales) => {
+            const container = document.getElementById('categoria-breakdown-container');
+            container.innerHTML = '';
+
+            const ingresosCat = metricasGlobales.ingresosPorCategoria || {};
+            const totalGlobal = metricasGlobales.total || 1; // Prevenir división por cero
+
+            const listaCategorias = Object.entries(ingresosCat);
+
+            if (listaCategorias.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 col-span-2">Sin datos de categoría.</p>`;
+                return;
+            }
+
+            listaCategorias.forEach(([cat, monto]) => {
+                const porcentaje = ((monto / totalGlobal) * 100).toFixed(1);
+
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col justify-between';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-semibold text-slate-200">${cat}</span>
+                        <span class="text-xs font-bold text-cyan-400">${formatearMoneda(monto)}</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden mb-1">
+                        <div class="bg-gradient-to-r from-cyan-500 to-violet-500 h-2 rounded-full transition-all duration-500" 
+                             style="width: ${porcentaje}%"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-500 text-right">${porcentaje}% del total</span>
+                `;
+
+                container.appendChild(card);
+            });
+        };
+
+        /**
+         * Función orquestadora que actualiza la interfaz por completo
+         */
+        const actualizarDashboard = () => {
+            const filtradas = obtenerTransaccionesFiltradas();
+            const metricasFiltradas = calcularMetricas(filtradas);
+            const metricasTotales = calcularMetricas(transacciones);
+
+            renderizarKPIs(metricasFiltradas, filtradas.length);
+            renderizarTabla(filtradas);
+            renderizarDesgloseCategorias(metricasTotales);
+        };
+
+        // ==========================================
+        // 5. GESTIÓN DE EVENTOS & INTERACTIVIDAD
+        // ==========================================
+
+        // Evento Formulario: Agregar Nueva Transacción
+        document.getElementById('form-nueva-venta').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Captura de valores de los inputs
+            const producto = document.getElementById('input-producto').value.trim();
+            const categoria = document.getElementById('select-categoria').value;
+            const monto = parseFloat(document.getElementById('input-monto').value);
+            const fecha = document.getElementById('input-fecha').value;
+            const cliente = document.getElementById('input-cliente').value.trim();
+
+            if (!producto || isNaN(monto) || !fecha || !cliente) {
+                mostrarToast('Por favor completa todos los campos correctamente.', 'error');
+                return;
+            }
+
+            // Creación del nuevo objeto transacción
+            const nuevaVenta = {
+                id: 'tx-' + Date.now(),
+                producto,
+                categoria,
+                monto,
+                fecha,
+                cliente
+            };
+
+            // Agregar al inicio del array
+            transacciones.unshift(nuevaVenta);
+
+            // Persistencia
+            guardarEnLocalStorage();
+
+            // Actualizar vista
+            actualizarDashboard();
+
+            // Resetear formulario
+            e.target.reset();
+            // Restaurar fecha por defecto
+            document.getElementById('input-fecha').valueAsDate = new Date();
+
+            mostrarToast('Transacción agregada exitosamente', 'exito');
+        });
+
+        // Evento Delegado: Eliminar Transacción de la Tabla
+        document.getElementById('tabla-ventas-body').addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-eliminar')) {
+                const id = e.target.getAttribute('data-id');
+                
+                // Confirmación simple mediante array filter
+                transacciones = transacciones.filter(tx => tx.id !== id);
+                guardarEnLocalStorage();
+                actualizarDashboard();
+
+                mostrarToast('Registro eliminado correctamente', 'info');
+            }
+        });
+
+        // Listeners para Filtros
+        document.getElementById('filtro-busqueda').addEventListener('input', actualizarDashboard);
+        document.getElementById('filtro-categoria').addEventListener('change', actualizarDashboard);
+        document.getElementById('filtro-orden').addEventListener('change', actualizarDashboard);
+
+        // Botón para Restaurar Datos de Muestra
+        document.getElementById('btn-seed').addEventListener('click', () => {
+            transacciones = [...DATOS_EJEMPLO];
+            guardarEnLocalStorage();
+            actualizarDashboard();
+            mostrarToast('Datos de muestra restaurados', 'info');
+        });
+
+        // Mostrar / Ocultar Guía Pedagógica
+        const guideEl = document.getElementById('pedagogical-guide');
+        const codeToggleText = document.getElementById('code-toggle-text');
+
+        document.getElementById('btn-toggle-code').addEventListener('click', () => {
+            guideEl.classList.toggle('hidden');
+            const isHidden = guideEl.classList.contains('hidden');
+            codeToggleText.textContent = isHidden ? 'Ver Guía Pedagógica' : 'Ocultar Guía';
+        });
+
+        document.getElementById('btn-close-guide').addEventListener('click', () => {
+            guideEl.classList.add('hidden');
+            codeToggleText.textContent = 'Ver Guía Pedagógica';
+        });
+
+        // Notificación Toast
+        function mostrarToast(mensaje, tipo = 'exito') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            const colorBg = tipo === 'exito' ? 'bg-emerald-600' : tipo === 'error' ? 'bg-rose-600' : 'bg-cyan-600';
+
+            toast.className = `${colorBg} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transform transition duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${mensaje}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => container.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // ==========================================
+        // 6. INICIALIZACIÓN
+        // ==========================================
+        window.onload = () => {
+            // Establecer fecha de hoy en el formulario por defecto
+            document.getElementById('input-fecha').valueAsDate = new Date();
+            // Cargar datos y renderizar interfaz
+            actualizarDashboard();
+        };
+    </script>
+</body>
+</html>

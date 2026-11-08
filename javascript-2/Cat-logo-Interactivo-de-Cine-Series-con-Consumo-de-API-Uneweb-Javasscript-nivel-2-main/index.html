@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream Explorer - Paginación & Fallbacks</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#111827', 900: '#0f172a', 950: '#050914' },
+                        brand: { red: '#E50914', crimson: '#B81D24', cyan: '#06B6D4', gold: '#F59E0B' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050914; color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+        .glass-input {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+        }
+        .glass-input:focus {
+            border-color: #E50914;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.3);
+        }
+        .movie-card:hover .movie-overlay { opacity: 1; transform: translateY(0); }
+        .movie-overlay { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="min-h-screen pb-16 antialiased selection:bg-brand-red selection:text-white">
+
+    <!-- Header Principal -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-gradient-to-tr from-red-600 to-rose-500 rounded-xl shadow-lg shadow-red-600/30">
+                        <i class="fa-solid fa-film text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+                                CineStream <span class="text-brand-red">Explorer</span>
+                            </h1>
+                            <span class="px-2.5 py-0.5 text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 rounded-full">PAGINACIÓN API</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Proyecto 2 JS Nivel 2: Paginación Real, Manejo de Errores de Imagen & Async/Await</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <button id="btn-open-comparator" class="relative px-3.5 py-2 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced text-amber-400"></i> Comparar
+                        <span id="badge-compare-count" class="px-1.5 py-0.2 bg-amber-500 text-slate-950 font-extrabold rounded-full text-[10px]">0</span>
+                    </button>
+
+                    <button id="btn-show-favorites" class="px-3.5 py-2 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-brand-red"></i> Favoritos
+                        <span id="badge-fav-count" class="px-1.5 py-0.2 bg-brand-red text-white font-bold rounded-full text-[10px]">0</span>
+                    </button>
+
+                    <button id="btn-config-api" class="p-2 text-xs text-slate-400 hover:text-white bg-slate-800/80 rounded-xl border border-slate-700" title="Configurar API Key">
+                        <i class="fa-solid fa-key"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-8">
+
+        <!-- Barra de Búsqueda -->
+        <section class="glass-card rounded-2xl p-5 border border-slate-800/80">
+            <form id="form-search" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                <div class="relative md:col-span-6">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                    <input type="text" id="input-search" placeholder="Buscar película o serie (Ej: Batman, Marvel, Star Wars)..." 
+                           class="w-full pl-11 pr-4 py-3 rounded-xl text-sm glass-input font-medium" autocomplete="off" required>
+                    <span id="search-spinner" class="hidden absolute right-4 top-3.5 text-brand-red animate-spin">
+                        <i class="fa-solid fa-spinner text-sm"></i>
+                    </span>
+                </div>
+
+                <div class="md:col-span-3">
+                    <select id="select-type" class="w-full py-3 px-3.5 text-sm rounded-xl glass-input bg-slate-900 font-medium">
+                        <option value="">Todos los tipos</option>
+                        <option value="movie">Películas</option>
+                        <option value="series">Series de TV</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-3 flex items-center gap-2">
+                    <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-red-600/25 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-search"></i> Buscar
+                    </button>
+                    <button type="button" id="btn-quick-trends" class="py-3 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs font-semibold transition" title="Buscar Aleatorio">
+                        <i class="fa-solid fa-shuffle text-amber-400"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Indicador de Resultados -->
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3" id="anchor-results">
+            <h2 id="section-title" class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-fire text-brand-red"></i> Resultados de Búsqueda
+            </h2>
+            <span id="results-count" class="text-xs text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
+                Mostrando resultados de API OMDb
+            </span>
+        </div>
+
+        <!-- Rejilla de Películas -->
+        <section id="movies-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            <!-- Tarjetas generadas dinámicamente con JavaScript -->
+        </section>
+
+        <!-- CONTROLES DE PAGINACIÓN -->
+        <section id="pagination-container" class="hidden flex flex-col sm:flex-row items-center justify-between gap-4 py-4 border-t border-slate-800/80">
+            <div class="text-xs text-slate-400 font-medium">
+                Página <span id="lbl-page-current" class="text-white font-bold">1</span> de <span id="lbl-page-total" class="text-white font-bold">1</span> 
+                (<span id="lbl-total-items" class="text-cyan-400 font-semibold">0</span> títulos encontrados)
+            </div>
+
+            <div class="flex items-center gap-2" id="pagination-buttons">
+                <button id="btn-page-prev" class="px-4 py-2 text-xs font-bold text-slate-300 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl border border-slate-800 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-chevron-left"></i> Anterior
+                </button>
+
+                <!-- Indicadores de Números de Página -->
+                <div id="pagination-numbers" class="flex items-center gap-1"></div>
+
+                <button id="btn-page-next" class="px-4 py-2 text-xs font-bold text-slate-300 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl border border-slate-800 transition flex items-center gap-1.5">
+                    Siguiente <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Estado Vacío -->
+        <div id="empty-state" class="hidden text-center py-16 glass-card rounded-2xl border border-slate-800">
+            <div class="inline-flex p-4 rounded-full bg-slate-800/80 text-slate-500 mb-3">
+                <i class="fa-solid fa-film text-3xl text-brand-red"></i>
+            </div>
+            <h3 id="empty-title" class="text-base font-bold text-white">No se encontraron películas</h3>
+            <p id="empty-desc" class="text-xs text-slate-400 mt-1">Intenta con otro término de búsqueda o selecciona una opción distinta.</p>
+        </div>
+
+    </main>
+
+    <!-- MODAL DETALLES -->
+    <div id="modal-details" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card w-full max-w-3xl rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl relative">
+            <button id="btn-close-modal" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-900/80 text-slate-300 hover:text-white hover:bg-red-600 transition flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div id="modal-content" class="grid grid-cols-1 md:grid-cols-12"></div>
+        </div>
+    </div>
+
+    <!-- MODAL COMPARADOR -->
+    <div id="modal-comparator" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card w-full max-w-5xl rounded-3xl p-6 border border-slate-700/60 shadow-2xl relative space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-scale-balanced text-amber-400"></i> Comparador de Películas (Promise.all)
+                    </h3>
+                    <p class="text-xs text-slate-400">Consulta asíncrona concurrente de múltiples títulos en tiempo real.</p>
+                </div>
+                <button id="btn-close-comparator" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="comparator-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="btn-clear-compare" class="px-4 py-2 text-xs font-semibold text-rose-400 bg-rose-950/40 hover:bg-rose-900/60 rounded-xl border border-rose-800/60 transition">
+                    Vaciar Comparador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // 1. CONFIGURACIÓN Y ESTADO GLOBAL
+        // --------------------------------------------------------------------
+        let OMDB_API_KEY = "1f23a416";
+        const OMDB_BASE_URL = "https://www.omdbapi.com/";
+
+        // Imagen de reemplazo por defecto cuando falla o no existe póster en la API
+        const POSTER_DEFAULT = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=400&auto=format&fit=crop';
+
+        // Estado de la Aplicación ampliado con Paginación
+        const EstadoApp = {
+            busquedaActual: "Batman",
+            tipoActual: "",
+            paginaActual: 1,
+            totalPaginas: 1,
+            totalResultados: 0,
+            resultados: [],
+            favoritos: JSON.parse(localStorage.getItem('cinestream_favs')) || [],
+            listaComparar: JSON.parse(localStorage.getItem('cinestream_compare')) || [],
+            vistaActiva: "busqueda"
+        };
+
+        const TITULOS_ALEATORIOS = ["Marvel", "Spider-Man", "Star Wars", "Harry Potter", "Jurassic", "Matrix", "Lord of the Rings"];
+
+        // 2. PETICIONES ASÍNCROANAS A LA API CON PAGINACIÓN
+        // --------------------------------------------------------------------
+        
+        async function buscarPeliculasAPI(query, tipo = "", pagina = 1) {
+            mostrarCargando(true);
+            EstadoApp.busquedaActual = query;
+            EstadoApp.tipoActual = tipo;
+            EstadoApp.paginaActual = pagina;
+
+            try {
+                // Parámetro &page=N para la paginación nativa de OMDb API
+                const url = `${OMDB_BASE_URL}?apikey=${OMDB_API_KEY}&s=${encodeURIComponent(query)}&type=${tipo}&page=${pagina}`;
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+
+                if (datos.Response === "True") {
+                    EstadoApp.resultados = datos.Search;
+                    EstadoApp.totalResultados = parseInt(datos.totalResults, 10);
+                    EstadoApp.totalPaginas = Math.ceil(EstadoApp.totalResultados / 10);
+
+                    renderizarGrillaPeliculas(datos.Search);
+                    renderizarPaginacion();
+                    actualizarContadorResultados(`Mostrando página ${pagina} de ${EstadoApp.totalPaginas} (${EstadoApp.totalResultados} títulos)`);
+                } else {
+                    EstadoApp.resultados = [];
+                    EstadoApp.totalResultados = 0;
+                    EstadoApp.totalPaginas = 1;
+                    
+                    renderizarGrillaPeliculas([]);
+                    renderizarPaginacion();
+                    mostrarEstadoVacio("Sin resultados", datos.Error || "No se encontraron coincidencias.");
+                }
+            } catch (error) {
+                console.error("Error al buscar en la API:", error);
+                mostrarToast("Error de conexión con la API", "error");
+                mostrarEstadoVacio("Error de red", "Por favor verifica tu conexión o tu API Key.");
+            } finally {
+                mostrarCargando(false);
+            }
+        }
+
+        /**
+         * Traduce de forma asíncrona la sinopsis (Plot) y los premios (Awards) al español latino.
+         * Maneja automáticamente el límite de 500 caracteres dividiendo el texto en fragmentos.
+         */
+        async function traducirAlEspanolLatino(texto, esPremios = false) {
+            if (!texto || texto === 'N/A') return 'Información no disponible';
+
+            // 1. Limpieza de frases de error previas si quedaron cacheadas
+            if (texto.includes("QUERY LENGTH LIMIT EXCEEDED")) {
+                return "Sinopsis no disponible en español.";
+            }
+
+            try {
+                // 2. Si el texto es corto (menor a 450 caracteres), se traduce directamente
+                if (texto.length <= 450) {
+                    return await pedirTraduccionMyMemory(texto, esPremios);
+                }
+
+                // 3. Si el texto supera los 450 caracteres, se divide por oraciones/puntos (.)
+                const oraciones = texto.match(/[^.!?]+[.!?]+/g) || [texto];
+                let fragmentoActual = "";
+                const promesasFragmentos = [];
+
+                for (const oracion of oraciones) {
+                    if ((fragmentoActual + oracion).length > 400) {
+                        promesasFragmentos.push(pedirTraduccionMyMemory(fragmentoActual, esPremios));
+                        fragmentoActual = oracion;
+                    } else {
+                        fragmentoActual += " " + oracion;
+                    }
+                }
+                if (fragmentoActual.trim().length > 0) {
+                    promesasFragmentos.push(pedirTraduccionMyMemory(fragmentoActual, esPremios));
+                }
+
+                // 4. Se traducen todos los bloques en paralelo y se unen
+                const resultadosTraduccion = await Promise.all(promesasFragmentos);
+                return resultadosTraduccion.join(" ");
+
+            } catch (error) {
+                console.warn("Fallo en la traducción, aplicando fallback local:", error);
+                return aplicarFallbackLocal(texto, esPremios);
+            }
+        }
+
+        /**
+         * Petición individual a MyMemory API (máximo 450 caracteres)
+         */
+        async function pedirTraduccionMyMemory(textoParte, esPremios) {
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(textoParte.trim())}&langpair=en|es`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data && data.responseData && data.responseData.translatedText) {
+                    let traducido = data.responseData.translatedText;
+
+                    // Filtro por si MyMemory devuelve el error de límite
+                    if (traducido.includes("QUERY LENGTH LIMIT EXCEEDED")) {
+                        return aplicarFallbackLocal(textoParte, esPremios);
+                    }
+
+                    // Adaptación de términos a Español Latino
+                    return traducido
+                        .replace(/\bNominated for\b/gi, 'Nominada a')
+                        .replace(/\bWon\b/gi, 'Ganadora de')
+                        .replace(/\bOscars?\b/gi, 'Premios Óscar')
+                        .replace(/\bBAFTA Film Award\b/gi, 'Premio BAFTA')
+                        .replace(/\bwins\b/gi, 'victorias')
+                        .replace(/\bnominations\b/gi, 'nominaciones');
+                }
+            } catch (e) {
+                return aplicarFallbackLocal(textoParte, esPremios);
+            }
+            return textoParte;
+        }
+
+        /**
+         * Fallback de seguridad en caso de fallo de API o límite alcanzado
+         */
+        function aplicarFallbackLocal(texto, esPremios) {
+            if (esPremios) {
+                return texto
+                    .replace(/Nominated for/g, 'Nominada a')
+                    .replace(/Won/g, 'Ganadora de')
+                    .replace(/Oscars/g, 'Premios Óscar')
+                    .replace(/Oscar/g, 'Premio Óscar')
+                    .replace(/wins/g, 'victorias')
+                    .replace(/nominations/g, 'nominaciones')
+                    .replace(/Another/g, 'Otras')
+                    .replace(/win/g, 'victoria');
+            }
+            return texto;
+        }
+
+        async function obtenerDetallesPeliculaAPI(imdbID) {
+            try {
+                const url = `${OMDB_BASE_URL}?apikey=${OMDB_API_KEY}&i=${imdbID}&plot=full`;
+                const res = await fetch(url);
+                const datos = await res.json();
+
+                if (datos.Response === "True") {
+                    // Traducción concurrente de la sinopsis y premios al español latino
+                    const [sinopsisLatino, premiosLatino] = await Promise.all([
+                        traducirAlEspanolLatino(datos.Plot, false),
+                        traducirAlEspanolLatino(datos.Awards, true)
+                    ]);
+
+                    datos.PlotEs = sinopsisLatino;
+                    datos.AwardsEs = premiosLatino;
+
+                    return datos;
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function cargarComparacionConcurrente() {
+            if (EstadoApp.listaComparar.length === 0) {
+                document.getElementById('comparator-grid').innerHTML = `
+                    <p class="text-xs text-slate-400 col-span-full text-center py-8">
+                        No has seleccionado películas para comparar.
+                    </p>`;
+                return;
+            }
+
+            document.getElementById('comparator-grid').innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <i class="fa-solid fa-spinner animate-spin text-3xl text-amber-400 mb-2"></i>
+                    <p class="text-xs text-slate-300">Cargando datos concurrentes con Promise.all()...</p>
+                </div>`;
+
+            try {
+                const promesas = EstadoApp.listaComparar.map(id => obtenerDetallesPeliculaAPI(id));
+                const resultados = await Promise.all(promesas);
+                renderizarComparador(resultados.filter(p => p !== null));
+            } catch (e) {
+                mostrarToast("Error en comparación concurrente", "error");
+            }
+        }
+
+        // 3. RENDERIZADO DEL DOM & MANEJO DE IMÁGENES DEFENSIVO
+        // --------------------------------------------------------------------
+
+        function renderizarGrillaPeliculas(lista) {
+            const grid = document.getElementById('movies-grid');
+            const emptyState = document.getElementById('empty-state');
+            grid.innerHTML = '';
+
+            if (!lista || lista.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            lista.forEach(item => {
+                const esFavorito = EstadoApp.favoritos.some(f => f.imdbID === item.imdbID);
+                const estaEnComparar = EstadoApp.listaComparar.includes(item.imdbID);
+                
+                // Validación de imagen 1: Comprobar si la API devuelve 'N/A'
+                const tienePosterValido = item.Poster && item.Poster !== 'N/A';
+                const posterUrl = tienePosterValido ? item.Poster : POSTER_DEFAULT;
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl overflow-hidden relative group movie-card border border-slate-800 hover:border-red-500/50 transition duration-300 flex flex-col justify-between';
+
+                card.innerHTML = `
+                    <div class="relative overflow-hidden aspect-[2/3] bg-slate-900">
+                        <!-- Validación de imagen 2: Evento onerror para capturar URLs rotas de la API -->
+                        <img src="${posterUrl}" 
+                             alt="${item.Title}" 
+                             onerror="this.onerror=null; this.src='${POSTER_DEFAULT}';"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500" 
+                             loading="lazy">
+                        
+                        <div class="movie-overlay absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent opacity-0 p-4 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-0.5 text-[10px] font-extrabold bg-red-600 text-white rounded-md uppercase tracking-wider">
+                                    ${item.Type}
+                                </span>
+                                <button class="btn-toggle-fav p-2 rounded-full ${esFavorito ? 'bg-red-600 text-white' : 'bg-slate-900/80 text-slate-300 hover:text-red-400'} transition" data-id="${item.imdbID}">
+                                    <i class="fa-solid fa-heart pointer-events-none"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <button class="btn-open-details w-full py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow-lg shadow-red-600/30" data-id="${item.imdbID}">
+                                    <i class="fa-solid fa-circle-info pointer-events-none"></i> Ver Detalles
+                                </button>
+                                <button class="btn-toggle-compare w-full py-1.5 ${estaEnComparar ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'} font-semibold text-[11px] rounded-xl transition flex items-center justify-center gap-1" data-id="${item.imdbID}">
+                                    <i class="fa-solid fa-scale-balanced pointer-events-none"></i> ${estaEnComparar ? 'En Comparador' : 'Comparar'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 space-y-1 bg-slate-900/40">
+                        <h3 class="font-bold text-xs text-white truncate" title="${item.Title}">${item.Title}</h3>
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                            <span><i class="fa-regular fa-calendar text-brand-red"></i> ${item.Year}</span>
+                            <span class="text-amber-400 font-semibold"><i class="fa-solid fa-star"></i> IMDb</span>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        /**
+         * Renderiza el Panel de Paginación Dinámico
+         */
+        function renderizarPaginacion() {
+            const container = document.getElementById('pagination-container');
+            const btnPrev = document.getElementById('btn-page-prev');
+            const btnNext = document.getElementById('btn-page-next');
+            const lblCurrent = document.getElementById('lbl-page-current');
+            const lblTotal = document.getElementById('lbl-page-total');
+            const lblItems = document.getElementById('lbl-total-items');
+            const numbersContainer = document.getElementById('pagination-numbers');
+
+            // Si estamos en la vista de favoritos o no hay páginas suficientes, oculta la paginación
+            if (EstadoApp.vistaActiva === 'favoritos' || EstadoApp.totalPaginas <= 1) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            lblCurrent.textContent = EstadoApp.paginaActual;
+            lblTotal.textContent = EstadoApp.totalPaginas;
+            lblItems.textContent = EstadoApp.totalResultados;
+
+            btnPrev.disabled = EstadoApp.paginaActual <= 1;
+            btnNext.disabled = EstadoApp.paginaActual >= EstadoApp.totalPaginas;
+
+            // Renderizar botones numerados alrededor de la página actual
+            numbersContainer.innerHTML = '';
+            const maxVisible = 5;
+            let inicio = Math.max(1, EstadoApp.paginaActual - 2);
+            let fin = Math.min(EstadoApp.totalPaginas, inicio + maxVisible - 1);
+
+            if (fin - inicio < maxVisible - 1) {
+                inicio = Math.max(1, fin - maxVisible + 1);
+            }
+
+            for (let i = inicio; i <= fin; i++) {
+                const btnNum = document.createElement('button');
+                const esActual = i === EstadoApp.paginaActual;
+                btnNum.className = `w-8 h-8 text-xs font-bold rounded-xl transition ${
+                    esActual 
+                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
+                    : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-800'
+                }`;
+                btnNum.textContent = i;
+                btnNum.onclick = () => cambiarPagina(i);
+                numbersContainer.appendChild(btnNum);
+            }
+        }
+
+        function cambiarPagina(nuevaPagina) {
+            if (nuevaPagina < 1 || nuevaPagina > EstadoApp.totalPaginas || nuevaPagina === EstadoApp.paginaActual) return;
+            
+            // Solicita la nueva página a la API
+            buscarPeliculasAPI(EstadoApp.busquedaActual, EstadoApp.tipoActual, nuevaPagina);
+            
+            // Scroll suave hacia la sección de resultados
+            document.getElementById('anchor-results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderizarModalDetalles(p) {
+            const container = document.getElementById('modal-content');
+            const poster = (p.Poster && p.Poster !== 'N/A') ? p.Poster : POSTER_DEFAULT;
+
+            // Se utilizan p.PlotEs y p.AwardsEs con el texto en español latino
+            container.innerHTML = `
+                <div class="md:col-span-5 relative bg-slate-900">
+                    <img src="${poster}" 
+                        alt="${p.Title}" 
+                        onerror="this.onerror=null; this.src='${POSTER_DEFAULT}';"
+                        class="w-full h-full object-cover min-h-[320px]">
+                </div>
+                <div class="md:col-span-7 p-6 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-md">
+                                ⭐ ${p.imdbRating} / 10
+                            </span>
+                            <span class="text-xs text-slate-400">${p.Runtime}</span>
+                            <span class="px-2 py-0.5 text-[10px] bg-slate-800 text-cyan-300 rounded font-semibold">Español Latino</span>
+                        </div>
+                        <h2 class="text-xl font-extrabold text-white">${p.Title}</h2>
+                        <p class="text-xs text-slate-300 leading-relaxed pt-2">${p.PlotEs || p.Plot}</p>
+                    </div>
+
+                    <div class="space-y-1.5 border-t border-slate-800 pt-3 text-xs text-slate-400">
+                        <p><strong class="text-slate-200">Director:</strong> ${p.Director}</p>
+                        <p><strong class="text-slate-200">Elenco:</strong> ${p.Actors}</p>
+                        <p><strong class="text-slate-200">Premios:</strong> <span class="text-amber-300">${p.AwardsEs || p.Awards}</span></p>
+                    </div>
+
+                    <a href="https://www.imdb.com/title/${p.imdbID}" target="_blank" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition text-center flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Ficha Completa en IMDb
+                    </a>
+                </div>
+            `;
+
+            document.getElementById('modal-details').classList.remove('hidden');
+        }
+
+        function renderizarComparador(lista) {
+            const container = document.getElementById('comparator-grid');
+            container.innerHTML = '';
+
+            lista.forEach(p => {
+                const poster = (p.Poster && p.Poster !== 'N/A') ? p.Poster : POSTER_DEFAULT;
+
+                const col = document.createElement('div');
+                col.className = 'bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-3 flex flex-col justify-between';
+
+                col.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex gap-3">
+                            <img src="${poster}" onerror="this.onerror=null; this.src='${POSTER_DEFAULT}';" class="w-16 h-24 object-cover rounded-lg shadow">
+                            <div>
+                                <h4 class="font-bold text-xs text-white">${p.Title}</h4>
+                                <p class="text-[11px] text-slate-400">${p.Year} • ${p.Genre}</p>
+                                <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-400 rounded">
+                                    ⭐ ${p.imdbRating}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-slate-300 space-y-1 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800">
+                            <p><strong>Recaudación:</strong> ${p.BoxOffice || 'N/A'}</p>
+                            <p><strong>Votos IMDb:</strong> ${p.imdbVotes || 'N/A'}</p>
+                        </div>
+                    </div>
+                    <button class="btn-remove-compare w-full py-1.5 bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-semibold rounded-xl border border-rose-800/60 transition" data-id="${p.imdbID}">
+                        Quitar
+                    </button>
+                `;
+
+                container.appendChild(col);
+            });
+        }
+
+        // 4. LÓGICA DE FAVORITOS Y ESTADO
+        // --------------------------------------------------------------------
+
+        function toggleFavorito(imdbID) {
+            const idx = EstadoApp.favoritos.findIndex(f => f.imdbID === imdbID);
+            
+            if (idx >= 0) {
+                EstadoApp.favoritos.splice(idx, 1);
+                mostrarToast("Película removida de favoritos", "info");
+            } else {
+                const item = EstadoApp.resultados.find(r => r.imdbID === imdbID);
+                if (item) {
+                    EstadoApp.favoritos.push(item);
+                    mostrarToast("Guardada en favoritos", "exito");
+                }
+            }
+
+            localStorage.setItem('cinestream_favs', JSON.stringify(EstadoApp.favoritos));
+            actualizarBadgesHeader();
+
+            if (EstadoApp.vistaActiva === 'favoritos') {
+                renderizarGrillaPeliculas(EstadoApp.favoritos);
+                renderizarPaginacion();
+            } else {
+                renderizarGrillaPeliculas(EstadoApp.resultados);
+            }
+        }
+
+        function toggleComparar(imdbID) {
+            const idx = EstadoApp.listaComparar.indexOf(imdbID);
+
+            if (idx >= 0) {
+                EstadoApp.listaComparar.splice(idx, 1);
+                mostrarToast("Removida del comparador", "info");
+            } else {
+                if (EstadoApp.listaComparar.length >= 3) {
+                    mostrarToast("Máximo 3 películas para comparar", "error");
+                    return;
+                }
+                EstadoApp.listaComparar.push(imdbID);
+                mostrarToast("Agregada al comparador", "exito");
+            }
+
+            localStorage.setItem('cinestream_compare', JSON.stringify(EstadoApp.listaComparar));
+            actualizarBadgesHeader();
+            renderizarGrillaPeliculas(EstadoApp.resultados);
+        }
+
+        function actualizarBadgesHeader() {
+            document.getElementById('badge-fav-count').textContent = EstadoApp.favoritos.length;
+            document.getElementById('badge-compare-count').textContent = EstadoApp.listaComparar.length;
+        }
+
+        // 5. MANEJO DE EVENTOS
+        // --------------------------------------------------------------------
+
+        document.getElementById('movies-grid').addEventListener('click', async (e) => {
+            const btnDetails = e.target.closest('.btn-open-details');
+            const btnFav = e.target.closest('.btn-toggle-fav');
+            const btnCompare = e.target.closest('.btn-toggle-compare');
+
+            if (btnDetails) {
+                const id = btnDetails.getAttribute('data-id');
+                mostrarToast("Cargando detalles...", "info");
+                const detalles = await obtenerDetallesPeliculaAPI(id);
+                if (detalles) renderizarModalDetalles(detalles);
+            }
+
+            if (btnFav) toggleFavorito(btnFav.getAttribute('data-id'));
+            if (btnCompare) toggleComparar(btnCompare.getAttribute('data-id'));
+        });
+
+        document.getElementById('comparator-grid').addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-remove-compare')) {
+                toggleComparar(e.target.getAttribute('data-id'));
+                cargarComparacionConcurrente();
+            }
+        });
+
+        document.getElementById('form-search').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = document.getElementById('input-search').value.trim();
+            const tipo = document.getElementById('select-type').value;
+
+            if (query) {
+                EstadoApp.vistaActiva = 'busqueda';
+                document.getElementById('section-title').innerHTML = `<i class="fa-solid fa-search text-brand-red"></i> Resultados para "${query}"`;
+                buscarPeliculasAPI(query, tipo, 1);
+            }
+        });
+
+        document.getElementById('btn-show-favorites').addEventListener('click', () => {
+            EstadoApp.vistaActiva = 'favoritos';
+            document.getElementById('section-title').innerHTML = `<i class="fa-solid fa-heart text-brand-red"></i> Mis Películas Favoritas`;
+            renderizarGrillaPeliculas(EstadoApp.favoritos);
+            renderizarPaginacion();
+            actualizarContadorResultados(`Mostrando ${EstadoApp.favoritos.length} guardados`);
+        });
+
+        document.getElementById('btn-open-comparator').addEventListener('click', () => {
+            document.getElementById('modal-comparator').classList.remove('hidden');
+            cargarComparacionConcurrente();
+        });
+
+        document.getElementById('btn-quick-trends').addEventListener('click', () => {
+            const randomQuery = TITULOS_ALEATORIOS[Math.floor(Math.random() * TITULOS_ALEATORIOS.length)];
+            document.getElementById('input-search').value = randomQuery;
+            EstadoApp.vistaActiva = 'busqueda';
+            buscarPeliculasAPI(randomQuery, "", 1);
+        });
+
+        // Eventos de Botones Anterior / Siguiente
+        document.getElementById('btn-page-prev').addEventListener('click', () => {
+            cambiarPagina(EstadoApp.paginaActual - 1);
+        });
+        document.getElementById('btn-page-next').addEventListener('click', () => {
+            cambiarPagina(EstadoApp.paginaActual + 1);
+        });
+
+        // Cierre de Modales
+        document.getElementById('btn-close-modal').addEventListener('click', () => {
+            document.getElementById('modal-details').classList.add('hidden');
+        });
+        document.getElementById('btn-close-comparator').addEventListener('click', () => {
+            document.getElementById('modal-comparator').classList.add('hidden');
+        });
+        document.getElementById('btn-clear-compare').addEventListener('click', () => {
+            EstadoApp.listaComparar = [];
+            localStorage.setItem('cinestream_compare', JSON.stringify([]));
+            actualizarBadgesHeader();
+            cargarComparacionConcurrente();
+        });
+
+        document.getElementById('btn-config-api').addEventListener('click', () => {
+            const key = prompt("Ingresa tu OMDb API Key:", OMDB_API_KEY);
+            if (key) {
+                OMDB_API_KEY = key.trim();
+                mostrarToast("API Key guardada", "exito");
+            }
+        });
+
+        // UTILERÍAS
+        function mostrarCargando(flag) {
+            const spinner = document.getElementById('search-spinner');
+            if (flag) spinner.classList.remove('hidden');
+            else spinner.classList.add('hidden');
+        }
+
+        function actualizarContadorResultados(texto) {
+            document.getElementById('results-count').textContent = texto;
+        }
+
+        function mostrarEstadoVacio(titulo, desc) {
+            document.getElementById('movies-grid').classList.add('hidden');
+            document.getElementById('pagination-container').classList.add('hidden');
+            const emptyState = document.getElementById('empty-state');
+            document.getElementById('empty-title').textContent = titulo;
+            document.getElementById('empty-desc').textContent = desc;
+            emptyState.classList.remove('hidden');
+        }
+
+        function mostrarToast(mensaje, tipo = 'exito') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colorBg = tipo === 'exito' ? 'bg-emerald-600' : tipo === 'error' ? 'bg-rose-600' : 'bg-cyan-600';
+
+            toast.className = `${colorBg} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transform transition duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${mensaje}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => container.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // INICIALIZACIÓN
+        window.onload = () => {
+            actualizarBadgesHeader();
+            buscarPeliculasAPI("Batman", "", 1);
+        };
+    </script>
+</body>
+</html>

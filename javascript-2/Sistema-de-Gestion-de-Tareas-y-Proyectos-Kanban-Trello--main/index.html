@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow Kanban Pro - POO & Hydration System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#111827', 900: '#0f172a', 950: '#050914' },
+                        brand: { blue: '#3B82F6', purple: '#8B5CF6', rose: '#F43F5E', amber: '#F59E0B' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050914; color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-input {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f8fafc;
+        }
+        .glass-input:focus {
+            border-color: #8B5CF6;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+        }
+        .kanban-column {
+            min-height: 520px;
+            transition: background-color 0.2s ease;
+        }
+        .kanban-column.drag-over {
+            background-color: rgba(139, 92, 246, 0.12);
+            border-style: dashed;
+        }
+        .task-card {
+            cursor: grab;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .task-card:active { cursor: grabbing; }
+        .task-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12 antialiased selection:bg-brand-purple selection:text-white">
+
+    <!-- Header Principal -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-gradient-to-tr from-purple-600 to-indigo-500 rounded-xl shadow-lg shadow-purple-600/30">
+                        <i class="fa-solid fa-kanban text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+                                TaskFlow <span class="text-brand-purple">Kanban</span>
+                            </h1>
+                            <span class="px-2.5 py-0.5 text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full">POO & HERENCIA</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Proyecto 3: Clases, Polimorfismo, Encargados & Drag and Drop</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button id="btn-open-modal" class="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-purple-600/25 transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Nueva Tarea
+                    </button>
+                    <button id="btn-seed-data" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl border border-slate-700 transition" title="Generar Tareas Ejemplo">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                    </button>
+                    <button id="btn-clear-all" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-rose-400 font-semibold text-xs rounded-xl border border-slate-700 transition" title="Vaciar Tablero">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Tablero Kanban -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Columna 1: Por Hacer (todo) -->
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center justify-between bg-slate-900/90 px-4 py-3 rounded-2xl border border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-amber-400 shadow-md shadow-amber-400/50"></span>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Por Hacer</h2>
+                    </div>
+                    <span id="badge-count-todo" class="px-2.5 py-0.5 text-xs font-extrabold bg-slate-800 text-amber-400 rounded-full border border-slate-700">0</span>
+                </div>
+
+                <div id="col-todo" data-status="todo" class="kanban-column glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3 flex flex-col">
+                    <!-- Tarjetas inyectadas dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Columna 2: En Proceso (in_progress) -->
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center justify-between bg-slate-900/90 px-4 py-3 rounded-2xl border border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-brand-blue shadow-md shadow-blue-400/50"></span>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">En Proceso</h2>
+                    </div>
+                    <span id="badge-count-progress" class="px-2.5 py-0.5 text-xs font-extrabold bg-slate-800 text-brand-blue rounded-full border border-slate-700">0</span>
+                </div>
+
+                <div id="col-in_progress" data-status="in_progress" class="kanban-column glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3 flex flex-col">
+                    <!-- Tarjetas inyectadas dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Columna 3: Completado (done) -->
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center justify-between bg-slate-900/90 px-4 py-3 rounded-2xl border border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-400 shadow-md shadow-emerald-400/50"></span>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Completado</h2>
+                    </div>
+                    <span id="badge-count-done" class="px-2.5 py-0.5 text-xs font-extrabold bg-slate-800 text-emerald-400 rounded-full border border-slate-700">0</span>
+                </div>
+
+                <div id="col-done" data-status="done" class="kanban-column glass-card rounded-2xl p-4 border border-slate-800/80 space-y-3 flex flex-col">
+                    <!-- Tarjetas inyectadas dinámicamente -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL DE CREACIÓN DE TAREAS -->
+    <div id="modal-task" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-lg rounded-3xl p-6 border border-slate-700/60 shadow-2xl relative space-y-5">
+            
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-brand-purple"></i> Nueva Instancia de Tarea
+                </h3>
+                <button id="btn-close-modal" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form id="form-task" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Título de la Tarea</label>
+                    <input type="text" id="task-title" class="w-full py-2.5 px-3.5 text-sm rounded-xl glass-input font-medium" placeholder="Ej: Corregir fuga de memoria en WebSocket" required>
+                </div>
+
+                <!-- CAMPO ENCARGADO / RESPONSABLE DE LA TAREA -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Encargado / Responsable</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+                        <input type="text" id="task-assignee" class="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl glass-input font-medium" placeholder="Ej: Arístides Molina, Lisbeth..." required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Tipo de Clase</label>
+                        <select id="task-type" class="w-full py-2.5 px-3.5 text-sm rounded-xl glass-input bg-slate-900 font-medium">
+                            <option value="bug">🐛 BugTask (Error)</option>
+                            <option value="feature">🚀 FeatureTask (Función)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Prioridad</label>
+                        <select id="task-priority" class="w-full py-2.5 px-3.5 text-sm rounded-xl glass-input bg-slate-900 font-medium">
+                            <option value="Baja">Baja</option>
+                            <option value="Media" selected>Media</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo Dinámico según la Subclase seleccionada -->
+                <div id="dynamic-fields" class="p-3.5 bg-slate-900/60 rounded-2xl border border-slate-800 space-y-3">
+                    <!-- Se inyectan campos específicos de BugTask o FeatureTask -->
+                </div>
+
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" id="btn-cancel-task" class="px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl border border-slate-700 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-purple-600/30 transition">
+                        Instanciar Tarea
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // ====================================================================
+        // 1. ARQUITECTURA DE CLASES (POO, HERENCIA Y POLIMORFISMO)
+        // ====================================================================
+
+        /**
+         * Clase Base: Task
+         */
+        class Task {
+            constructor(id, title, priority = 'Media', status = 'todo', assignee = 'Sin asignar') {
+                this.id = id || 'task-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+                this.title = title;
+                this.priority = priority;
+                this.status = status; // 'todo', 'in_progress', 'done'
+                this.assignee = assignee || 'Sin asignar';
+                this.createdAt = new Date().toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+            }
+
+            // Método genérico para el badge de prioridad
+            getPriorityBadge() {
+                const colors = {
+                    'Alta': 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+                    'Media': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                    'Baja': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                };
+                return `<span class="px-2 py-0.5 text-[10px] font-bold rounded-md border ${colors[this.priority]}">${this.priority}</span>`;
+            }
+
+            // Método polimórfico (sobreescrito por subclases)
+            getTypeBadgeHTML() {
+                return `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-800 text-slate-300 rounded-md border border-slate-700">General</span>`;
+            }
+
+            getSpecificDetailHTML() {
+                return '';
+            }
+        }
+
+        /**
+         * Subclase 1: BugTask (Hereda de Task)
+         */
+        class BugTask extends Task {
+            constructor(id, title, priority, status, assignee, severity = 'Alta', stepsToReproduce = 'Sin pasos especificadas') {
+                super(id, title, priority, status, assignee); // Pasa assignee al constructor padre
+                this.type = 'bug';
+                this.severity = severity;
+                this.stepsToReproduce = stepsToReproduce;
+            }
+
+            // Sobreescritura Polimórfica
+            getTypeBadgeHTML() {
+                return `<span class="px-2 py-0.5 text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-md"><i class="fa-solid fa-bug"></i> Bug</span>`;
+            }
+
+            getSpecificDetailHTML() {
+                return `<p class="text-[11px] text-slate-400 truncate"><strong class="text-slate-300">Severidad:</strong> ${this.severity}</p>`;
+            }
+        }
+
+        /**
+         * Subclase 2: FeatureTask (Hereda de Task)
+         */
+        class FeatureTask extends Task {
+            constructor(id, title, priority, status, assignee, impact = 'Backend', estimatedHours = 4) {
+                super(id, title, priority, status, assignee); // Pasa assignee al constructor padre
+                this.type = 'feature';
+                this.impact = impact;
+                this.estimatedHours = estimatedHours;
+            }
+
+            // Sobreescritura Polimórfica
+            getTypeBadgeHTML() {
+                return `<span class="px-2 py-0.5 text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md"><i class="fa-solid fa-rocket"></i> Feature</span>`;
+            }
+
+            getSpecificDetailHTML() {
+                return `<p class="text-[11px] text-slate-400 truncate"><strong class="text-slate-300">Impacto:</strong> ${this.impact} (${this.estimatedHours}h)</p>`;
+            }
+        }
+
+        // ====================================================================
+        // 2. PATRÓN FACTORY / HYDRATION (RECONSTRUCCIÓN DESDE LOCALSTORAGE)
+        // ====================================================================
+
+        class TaskFactory {
+            /**
+             * Convierte un objeto plano recuperado de JSON.parse en una Instancia real con Métodos.
+             */
+            static createFromObject(obj) {
+                if (obj.type === 'bug') {
+                    return new BugTask(obj.id, obj.title, obj.priority, obj.status, obj.assignee, obj.severity, obj.stepsToReproduce);
+                } else if (obj.type === 'feature') {
+                    return new FeatureTask(obj.id, obj.title, obj.priority, obj.status, obj.assignee, obj.impact, obj.estimatedHours);
+                }
+                return new Task(obj.id, obj.title, obj.priority, obj.status, obj.assignee);
+            }
+        }
+
+        // ====================================================================
+        // 3. GESTOR DE ESTADO SINGLETON (ProjectManager)
+        // ====================================================================
+
+        class ProjectManager {
+            constructor() {
+                if (ProjectManager.instance) {
+                    return ProjectManager.instance;
+                }
+                this.tasks = [];
+                this.init();
+                ProjectManager.instance = this;
+            }
+
+            init() {
+                this.loadFromLocalStorage();
+            }
+
+            addTask(taskInstance) {
+                this.tasks.push(taskInstance);
+                this.saveToLocalStorage();
+                this.renderUI();
+            }
+
+            removeTask(id) {
+                this.tasks = this.tasks.filter(t => t.id !== id);
+                this.saveToLocalStorage();
+                this.renderUI();
+            }
+
+            updateTaskStatus(id, newStatus) {
+                const task = this.tasks.find(t => t.id === id);
+                if (task) {
+                    task.status = newStatus;
+                    this.saveToLocalStorage();
+                    this.renderUI();
+                }
+            }
+
+            saveToLocalStorage() {
+                localStorage.setItem('taskflow_kanban_data', JSON.stringify(this.tasks));
+            }
+
+            loadFromLocalStorage() {
+                const rawData = localStorage.getItem('taskflow_kanban_data');
+                if (rawData) {
+                    try {
+                        const parsedArray = JSON.parse(rawData);
+                        // Hidratación de objetos planos a Clases reales
+                        this.tasks = parsedArray.map(obj => TaskFactory.createFromObject(obj));
+                    } catch (e) {
+                        console.error("Error al rehidratar datos:", e);
+                        this.tasks = [];
+                    }
+                } else {
+                    this.seedDefaultData();
+                }
+            }
+
+            clearAll() {
+                this.tasks = [];
+                this.saveToLocalStorage();
+                this.renderUI();
+            }
+
+            seedDefaultData() {
+                this.tasks = [
+                    new BugTask(null, "Error 500 al autenticar con OAuth2", "Alta", "todo", "Arístides Molina", "Crítica", "1. Ir a /login 2. Clic en Google"),
+                    new FeatureTask(null, "Integración de pasarela de pago Stripe", "Media", "in_progress", "Lisbeth Pérez", "Backend", 12),
+                    new FeatureTask(null, "Diseñar nuevo Landing Page en Tailwind", "Baja", "done", "Valentina R.", "Frontend", 6)
+                ];
+                this.saveToLocalStorage();
+                this.renderUI();
+            }
+
+            renderUI() {
+                const columns = {
+                    todo: document.getElementById('col-todo'),
+                    in_progress: document.getElementById('col-in_progress'),
+                    done: document.getElementById('col-done')
+                };
+
+                // Vaciar columnas
+                Object.values(columns).forEach(col => col.innerHTML = '');
+
+                // Agrupar e inyectar tarjetas
+                this.tasks.forEach(task => {
+                    const cardHTML = this.createCardElement(task);
+                    if (columns[task.status]) {
+                        columns[task.status].appendChild(cardHTML);
+                    }
+                });
+
+                // Actualizar contadores
+                document.getElementById('badge-count-todo').textContent = this.tasks.filter(t => t.status === 'todo').length;
+                document.getElementById('badge-count-progress').textContent = this.tasks.filter(t => t.status === 'in_progress').length;
+                document.getElementById('badge-count-done').textContent = this.tasks.filter(t => t.status === 'done').length;
+            }
+
+            createCardElement(task) {
+                const card = document.createElement('div');
+                card.id = task.id;
+                card.draggable = true;
+                card.className = 'task-card bg-slate-900/90 p-4 rounded-2xl border border-slate-800/80 shadow-md hover:border-purple-500/40 flex flex-col justify-between space-y-3';
+
+                card.innerHTML = `
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5">
+                                ${task.getTypeBadgeHTML()}
+                                ${task.getPriorityBadge()}
+                            </div>
+                            <button class="btn-delete-task text-slate-500 hover:text-rose-400 text-xs transition" data-id="${task.id}">
+                                <i class="fa-solid fa-trash pointer-events-none"></i>
+                            </button>
+                        </div>
+                        <h4 class="font-semibold text-xs text-white leading-snug">${task.title}</h4>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-800/60 flex flex-col gap-1.5">
+                        ${task.getSpecificDetailHTML()}
+                        
+                        <!-- Muestra del Encargado y Fecha de Creación -->
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1">
+                            <span class="flex items-center gap-1 text-slate-300 font-medium truncate max-w-[140px]" title="Encargado: ${task.assignee}">
+                                <i class="fa-solid fa-user-circle text-purple-400"></i> ${task.assignee}
+                            </span>
+                            <span class="text-slate-500 font-medium"><i class="fa-regular fa-clock"></i> ${task.createdAt}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Eventos Drag & Drop individuales
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', task.id);
+                    card.classList.add('dragging');
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                });
+
+                return card;
+            }
+        }
+
+        // Instancia Global Singleton
+        const manager = new ProjectManager();
+
+        // ====================================================================
+        // 4. INTERACCIONES DEL DOM Y FORMULARIOS
+        // ====================================================================
+
+        const modalTask = document.getElementById('modal-task');
+        const selectType = document.getElementById('task-type');
+        const dynamicFields = document.getElementById('dynamic-fields');
+
+        // Renderizar campos dinámicos del modal según el tipo de Clase
+        function renderDynamicFields(type) {
+            if (type === 'bug') {
+                dynamicFields.innerHTML = `
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Severidad del Error</label>
+                        <select id="bug-severity" class="w-full py-2 px-3 text-xs rounded-xl glass-input bg-slate-900">
+                            <option value="Menor">Menor</option>
+                            <option value="Alta" selected>Alta</option>
+                            <option value="Crítica">Crítica</option>
+                        </select>
+                    </div>
+                `;
+            } else {
+                dynamicFields.innerHTML = `
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Área / Impacto</label>
+                            <select id="feature-impact" class="w-full py-2 px-3 text-xs rounded-xl glass-input bg-slate-900">
+                                <option value="Frontend">Frontend</option>
+                                <option value="Backend" selected>Backend</option>
+                                <option value="UI/UX">UI/UX</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Horas Estimadas</label>
+                            <input type="number" id="feature-hours" value="4" min="1" max="100" class="w-full py-2 px-3 text-xs rounded-xl glass-input">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Listeners del Modal
+        document.getElementById('btn-open-modal').addEventListener('click', () => {
+            renderDynamicFields(selectType.value);
+            modalTask.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-close-modal').addEventListener('click', () => modalTask.classList.add('hidden'));
+        document.getElementById('btn-cancel-task').addEventListener('click', () => modalTask.classList.add('hidden'));
+
+        selectType.addEventListener('change', (e) => renderDynamicFields(e.target.value));
+
+        // Submit del Formulario: Instanciación Orientada a Objetos
+        document.getElementById('form-task').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value.trim();
+            const assignee = document.getElementById('task-assignee').value.trim();
+            const type = selectType.value;
+            const priority = document.getElementById('task-priority').value;
+
+            let newTaskInstance = null;
+
+            if (type === 'bug') {
+                const severity = document.getElementById('bug-severity').value;
+                // Instanciación directa con subclase BugTask
+                newTaskInstance = new BugTask(null, title, priority, 'todo', assignee, severity);
+            } else {
+                const impact = document.getElementById('feature-impact').value;
+                const hours = parseInt(document.getElementById('feature-hours').value, 10);
+                // Instanciación directa con subclase FeatureTask
+                newTaskInstance = new FeatureTask(null, title, priority, 'todo', assignee, impact, hours);
+            }
+
+            manager.addTask(newTaskInstance);
+            modalTask.classList.add('hidden');
+            document.getElementById('form-task').reset();
+            mostrarToast("Nueva instancia creada exitosamente", "exito");
+        });
+
+        // Configuración de Zonas de Soltado Drag & Drop (Columnas)
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            column.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                column.classList.add('drag-over');
+            });
+
+            column.addEventListener('dragleave', () => {
+                column.classList.remove('drag-over');
+            });
+
+            column.addEventListener('drop', (e) => {
+                e.preventDefault();
+                column.classList.remove('drag-over');
+                const taskId = e.dataTransfer.getData('text/plain');
+                const newStatus = column.getAttribute('data-status');
+                
+                manager.updateTaskStatus(taskId, newStatus);
+                mostrarToast(`Tarea movida a ${newStatus.replace('_', ' ')}`, "info");
+            });
+        });
+
+        // Delegación de Eventos para Eliminación
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-delete-task')) {
+                const id = e.target.getAttribute('data-id');
+                manager.removeTask(id);
+                mostrarToast("Instancia eliminada del estado", "info");
+            }
+        });
+
+        // Botones de Utilidad en Header
+        document.getElementById('btn-seed-data').addEventListener('click', () => {
+            manager.seedDefaultData();
+            mostrarToast("Datos de prueba cargados", "exito");
+        });
+
+        document.getElementById('btn-clear-all').addEventListener('click', () => {
+            if (confirm("¿Deseas vaciar todo el tablero?")) {
+                manager.clearAll();
+                mostrarToast("Tablero vaciado", "info");
+            }
+        });
+
+        function mostrarToast(mensaje, tipo = 'exito') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colorBg = tipo === 'exito' ? 'bg-purple-600' : tipo === 'error' ? 'bg-rose-600' : 'bg-indigo-600';
+
+            toast.className = `${colorBg} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transform transition duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${mensaje}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => container.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Inicialización
+        window.onload = () => manager.renderUI();
+    </script>
+</body>
+</html>
