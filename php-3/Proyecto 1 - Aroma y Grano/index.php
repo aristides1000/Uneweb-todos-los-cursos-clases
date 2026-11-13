@@ -49,48 +49,50 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </nav>
     </header>
 
-    <div class="hero">
-        <h2>Despierta tus sentidos con el mejor café de origen</h2>
-        <p>Granos seleccionados tostados artesanalmente y llevados a la puerta de tu casa.</p>
-    </div>
+    <main class="main-content">
+        <div class="hero">
+            <h2>Despierta tus sentidos con el mejor café de origen</h2>
+            <p>Granos seleccionados tostados artesanalmente y llevados a la puerta de tu casa.</p>
+        </div>
 
-    <div class="container">
-        <!-- Módulo de Búsqueda y Filtros -->
-        <form method="GET" class="search-filter-bar">
-            <input type="text" name="q" placeholder="Buscar por nombre, origen o notas..." value="<?php echo htmlspecialchars($busqueda); ?>">
-            <select name="tueste">
-                <option value="">Todos los tuestes</option>
-                <option value="Claro" <?php if($tueste=='Claro') echo 'selected'; ?>>Tueste Claro</option>
-                <option value="Medio" <?php if($tueste=='Medio') echo 'selected'; ?>>Tueste Medio</option>
-                <option value="Oscuro" <?php if($tueste=='Oscuro') echo 'selected'; ?>>Tueste Oscuro</option>
-            </select>
-            <button type="submit" class="btn">Filtrar</button>
-        </form>
+        <div class="container">
+            <!-- Módulo de Búsqueda y Filtros -->
+            <form method="GET" class="search-filter-bar">
+                <input type="text" name="q" placeholder="Buscar por nombre, origen o notas..." value="<?php echo htmlspecialchars($busqueda); ?>">
+                <select name="tueste">
+                    <option value="">Todos los tuestes</option>
+                    <option value="Claro" <?php if($tueste=='Claro') echo 'selected'; ?>>Tueste Claro</option>
+                    <option value="Medio" <?php if($tueste=='Medio') echo 'selected'; ?>>Tueste Medio</option>
+                    <option value="Oscuro" <?php if($tueste=='Oscuro') echo 'selected'; ?>>Tueste Oscuro</option>
+                </select>
+                <button type="submit" class="btn">Filtrar</button>
+            </form>
 
-        <!-- Módulo de Productos -->
-        <div class="product-grid">
-            <?php if (count($productos) > 0): ?>
-                <?php foreach ($productos as $p): ?>
-                    <div class="product-card">
-                        <img src="assets/uploads/<?php echo htmlspecialchars($p['imagen']); ?>" alt="<?php echo htmlspecialchars($p['nombre']); ?>">
-                        <div class="product-info">
-                            <h3><?php echo htmlspecialchars($p['nombre']); ?></h3>
-                            <p><?php echo substr(htmlspecialchars($p['descripcion']), 0, 90); ?>...</p>
-                            <div style="font-size: 0.85rem; color: #888; margin-bottom: 0.5rem;">
-                                📍 Origen: <?php echo htmlspecialchars($p['origen']); ?> | ⚖️ <?php echo $p['peso_gramos']; ?>g
-                            </div>
-                            <div class="product-footer">
-                                <span class="price">$<?php echo number_format($p['precio'], 2); ?></span>
-                                <a href="producto-detalle.php?id=<?php echo $p['id']; ?>" class="btn">Ver Detalles</a>
+            <!-- Módulo de Productos -->
+            <div class="product-grid">
+                <?php if (count($productos) > 0): ?>
+                    <?php foreach ($productos as $p): ?>
+                        <div class="product-card">
+                            <img src="assets/uploads/<?php echo htmlspecialchars($p['imagen']); ?>" alt="<?php echo htmlspecialchars($p['nombre']); ?>">
+                            <div class="product-info">
+                                <h3><?php echo htmlspecialchars($p['nombre']); ?></h3>
+                                <p><?php echo substr(htmlspecialchars($p['descripcion']), 0, 90); ?>...</p>
+                                <div style="font-size: 0.85rem; color: #888; margin-bottom: 0.5rem;">
+                                    📍 Origen: <?php echo htmlspecialchars($p['origen']); ?> | ⚖️ <?php echo $p['peso_gramos']; ?>g
+                                </div>
+                                <div class="product-footer">
+                                    <span class="price">$<?php echo number_format($p['precio'], 2); ?></span>
+                                    <a href="producto-detalle.php?id=<?php echo $p['id']; ?>" class="btn">Ver Detalles</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No se encontraron cafés o accesorios con esos criterios.</p>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">No se encontraron cafés o accesorios con esos criterios.</p>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
+    </main>
 
     <footer class="main-footer">
         <p>&copy; 2026 Aroma y Grano. Todos los derechos reservados. | Desarrollado para PHP Nivel III Uneweb.</p>
