@@ -11,10 +11,6 @@ CREATE TABLE usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insertar un Administrador por defecto (Clave: Admin123*)
-INSERT INTO usuarios (nombre, email, password, rol) VALUES 
-('Administrador', 'admin@aromaygrano.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
-
 -- Tabla de Productos
 CREATE TABLE productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
