@@ -32,6 +32,7 @@ CREATE TABLE pedidos (
     total DECIMAL(10,2) NOT NULL,
     estado ENUM('Pendiente', 'Procesado', 'Enviado') DEFAULT 'Pendiente',
     fecha_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_envio DATETIME NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
