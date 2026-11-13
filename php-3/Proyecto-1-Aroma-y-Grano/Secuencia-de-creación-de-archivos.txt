@@ -1,0 +1,17 @@
+- aroma_y_grano.sql
+- install.php
+- conexion.php
+- funciones.php
+assets/css/estilos.css
+index.php
+admin/productos.php
+carrito.php
+registro.php
+login.php
+checkout.php
+producto-detalle.php
+admin/index.php
+admin/pedidos.php
+logout.php
+admin/salir.php
+assets/js/main.js
