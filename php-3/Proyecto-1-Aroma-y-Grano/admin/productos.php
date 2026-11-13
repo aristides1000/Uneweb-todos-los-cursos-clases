@@ -78,7 +78,9 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <header>
         <h1>Panel Admin <span>- Aroma & Grano</span></h1>
         <nav>
+            <a href="index.php">Dashboard</a>
             <a href="productos.php">Productos</a>
+            <a href="pedidos.php">Pedidos</a>
             <a href="../index.php" target="_blank">Ver Sitio Web</a>
             <a href="../logout.php">Cerrar Sesión</a>
         </nav>
