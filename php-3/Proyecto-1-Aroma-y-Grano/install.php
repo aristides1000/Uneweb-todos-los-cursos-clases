@@ -7,11 +7,11 @@ $tipo_alerta = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = 'Administrador';
     $email = 'admin@aromaygrano.com';
-    $password_claro = 'Admin123*';
+    $password = 'Admin123*';
     $rol = 'admin';
 
     // Generar el hash oficial de PHP de forma automática
-    $password_hash = password_hash($password_claro, PASSWORD_DEFAULT);
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     try {
         $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)");
