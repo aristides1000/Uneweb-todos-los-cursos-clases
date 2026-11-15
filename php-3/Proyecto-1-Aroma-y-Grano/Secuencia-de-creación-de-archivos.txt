@@ -14,4 +14,4 @@
 - admin/pedidos.php
 - logout.php
 - admin/salir.php
-assets/js/main.js
+- assets/js/main.js
