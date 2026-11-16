@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYS-COMP 101 // Laboratorio de Lógica y Datos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-white">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 px-4 lg:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white font-mono font-bold text-lg">
+                    SYS
+                </div>
+                <div>
+                    <h1 class="font-mono font-bold text-base tracking-wide text-cyan-400">SYS-COMP 101 // Laboratorio de Lógica y Datos</h1>
+                    <p class="text-xs text-slate-400">Curso de Lógica de Programación con JavaScript</p>
+                </div>
+            </div>
+
+            <!-- TAB NAVIGATION -->
+            <nav class="flex flex-wrap items-center gap-1.5 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800" id="main-nav">
+                <button onclick="switchTab('architecture')" data-tab="architecture" class="nav-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 bg-cyan-500 text-white shadow-md shadow-cyan-500/20">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                    Arquitectura
+                </button>
+                <button onclick="switchTab('theory')" data-tab="theory" class="nav-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    Teoría y Pseudocódigo
+                </button>
+                <button onclick="switchTab('lab')" data-tab="lab" class="nav-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    Laboratorio de Datos
+                </button>
+                <button onclick="switchTab('console')" data-tab="console" class="nav-btn px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Consola y E/S
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-8">
+
+        <!-- TAB 1: ARCHITECTURE -->
+        <section id="tab-architecture" class="tab-content space-y-6">
+            <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm relative overflow-hidden shadow-xl">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                            Estructura Funcional del Computador
+                        </h2>
+                        <p class="text-sm text-slate-400 mt-1">Simulación visual de los componentes de hardware que ejecutan código y procesan tipos de datos en la memoria.</p>
+                    </div>
+                    <button onclick="simulateInstructionCycle()" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Simular Ciclo de Instrucción
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Periféricos E/S -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-mono text-xs font-semibold text-cyan-400 tracking-wider uppercase flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.115 6.848l-.054-.09A13.916 13.916 0 0116 11M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/></svg>
+                                    Periféricos E / S
+                                </span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">Capturan la Lectura Estándar (<code class="text-cyan-300 font-mono">prompt/inputs</code>) y emiten la Escritura Estándar (<code class="text-cyan-300 font-mono">console.log/DOM</code>).</p>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-800/80 font-mono text-xs text-slate-300" id="arch-io-status">
+                            <span class="text-slate-500">// Estado actual E/S:</span><br>
+                            <span class="text-cyan-400">> Sistema listo para entrada de datos...</span>
+                        </div>
+                    </div>
+
+                    <!-- CPU -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-mono text-xs font-semibold text-purple-400 tracking-wider uppercase flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                                    CPU (Unidad de Control & ALU)
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300" id="cpu-status-badge">Inactivo</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">La <strong class="text-purple-300">UC</strong> interpreta instrucciones y la <strong class="text-purple-300">ALU</strong> procesa operaciones aritméticas y lógicas elementales.</p>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-800/80 font-mono text-xs text-slate-300 space-y-1">
+                            <div><span class="text-slate-500">Operación ALU:</span> <span id="arch-alu-op" class="text-yellow-400">Ninguna</span></div>
+                            <div><span class="text-slate-500">Registro Acumulador:</span> <span id="arch-alu-acc" class="text-cyan-400">0</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Memoria RAM -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-mono text-xs font-semibold text-amber-400 tracking-wider uppercase flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                    Memoria RAM (Variables / Constantes)
+                                </span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20" id="arch-ram-count">0 alojadas</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">Almacenamiento volátil donde residen los datos tipados declarados por el usuario.</p>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-900 rounded-lg border border-slate-800/80 font-mono text-xs text-slate-400" id="arch-ram-preview">
+                            // Memoria vacía. Declare variables en el laboratorio.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: THEORY & PSEUDOCODE -->
+        <section id="tab-theory" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Construcción de Programas -->
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        Construcción de Programas
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <h4 class="font-mono text-xs font-semibold text-cyan-300 uppercase">Algoritmo vs Pseudocódigo vs Código</h4>
+                            <p class="text-xs text-slate-400 mt-1">Un <strong class="text-slate-200">algoritmo</strong> es la serie de pasos lógicos finitos. El <strong class="text-slate-200">pseudocódigo</strong> es un borrador estructurado en lenguaje natural, y el <strong class="text-slate-200">código JS</strong> es la implementación ejecutable por el computador.</p>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <h4 class="font-mono text-xs font-semibold text-cyan-300 uppercase">Capacidad de Abstracción y Fases</h4>
+                            <p class="text-xs text-slate-400 mt-1">Abstraer es aislar los datos esenciales del problema. Las fases de resolución incluyen: <strong class="text-slate-200">Análisis del problema, Diseño del Algoritmo, Codificación, Pruebas y Depuración</strong>.</p>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <h4 class="font-mono text-xs font-semibold text-cyan-300 uppercase">Calidad de los Programas</h4>
+                            <p class="text-xs text-slate-400 mt-1">Se mide por su <strong class="text-slate-200">correctitud, eficiencia, legibilidad</strong> (buen nombrado de variables y comentarios) y <strong class="text-slate-200">mantenibilidad</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tipos de Datos Elementales -->
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        Tipos de Datos Elementales en JS
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-mono text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Number</span>
+                                <span class="text-[10px] font-mono text-slate-500">Primitivo</span>
+                            </div>
+                            <h4 class="text-sm font-semibold text-white">Numérico (Enteros y decimales)</h4>
+                            <p class="text-xs text-slate-400 mt-1">Ej: <code class="text-emerald-300 font-mono">42, 3.1416</code>. Acepta operaciones aritméticas.</p>
+                        </div>
+
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-mono text-xs font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded border border-pink-500/20">String</span>
+                                <span class="text-[10px] font-mono text-slate-500">Primitivo</span>
+                            </div>
+                            <h4 class="text-sm font-semibold text-white">Cadena de Caracteres (Texto)</h4>
+                            <p class="text-xs text-slate-400 mt-1">Ej: <code class="text-pink-300 font-mono">"Hola Mundo"</code>. Acepta concatenación y operadores de texto.</p>
+                        </div>
+
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Boolean</span>
+                                <span class="text-[10px] font-mono text-slate-500">Primitivo</span>
+                            </div>
+                            <h4 class="text-sm font-semibold text-white">Lógico (Booleano)</h4>
+                            <p class="text-xs text-slate-400 mt-1">Ej: <code class="text-amber-300 font-mono">true</code> o <code class="text-amber-300 font-mono">false</code>. Resultado de comparaciones y lógica.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: LAB (DATA & RAM) -->
+        <section id="tab-lab" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Declarar Variable / Constante -->
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Declarar Variable / Constante
+                    </h3>
+                    <p class="text-xs text-slate-400">Simula la acción elemental de asignación (<code class="text-cyan-300 font-mono">=</code>) reservando espacio en la memoria RAM simulada.</p>
+
+                    <form id="var-form" onsubmit="handleDeclareVariable(event)" class="space-y-4">
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Tipo de Declaración</label>
+                            <select id="var-declaration" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                <option value="let">let (Variable mutable)</option>
+                                <option value="const">const (Constante inmutable)</option>
+                                <option value="var">var (Ámbito de función antiguo)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Nombre del Identificador</label>
+                            <input type="text" id="var-name" required placeholder="ej. edad, usuario, activo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono transition-colors">
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Tipo de Dato Asignado</label>
+                            <select id="var-type" onchange="updateValuePlaceholder()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                <option value="number">Numérico (Number)</option>
+                                <option value="string">Cadena de Texto (String)</option>
+                                <option value="boolean">Booleano (Boolean)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Valor Inicial</label>
+                            <input type="text" id="var-value" required placeholder="ej. 25, 'Ana', true" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono transition-colors">
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Alojar en Memoria RAM
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Monitor de Memoria RAM -->
+                <div class="lg:col-span-2 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                    Monitor de Memoria RAM (En Vivo)
+                                </h3>
+                                <p class="text-xs text-slate-400">Listado dinámico de celdas de memoria ocupadas por las variables y constantes creadas en el laboratorio.</p>
+                            </div>
+                            <button onclick="clearMemory()" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Limpiar Memoria
+                            </button>
+                        </div>
+
+                        <!-- Table container -->
+                        <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/60">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-800 text-[11px] font-mono text-slate-400 uppercase bg-slate-900/50">
+                                        <th class="p-3">Modificador</th>
+                                        <th class="p-3">Identificador</th>
+                                        <th class="p-3">Tipo</th>
+                                        <th class="p-3">Valor Actual</th>
+                                        <th class="p-3 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ram-table-body" class="text-xs font-mono divide-y divide-slate-800/60">
+                                    <tr>
+                                        <td colspan="5" class="p-6 text-center text-slate-500 italic">
+                                            // Sin datos en memoria RAM. Registre variables usando el panel izquierdo.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+                        <div>Capacidad simulada de RAM: <span class="text-cyan-400 font-semibold">Ilimitada (JS Engine)</span></div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>Estado: <strong class="text-emerald-400">Sincronizado</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: CONSOLE & I/O -->
+        <section id="tab-console" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Operaciones y Expresiones -->
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        Operaciones y Expresiones
+                    </h3>
+                    <p class="text-xs text-slate-400">Ejecuta operaciones aritméticas, lógicas y de concatenación usando los valores almacenados en la RAM.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Seleccionar Operando A</label>
+                            <select id="op-a" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                <option value="">-- Seleccione variable o valor directo --</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Operador Elemental</label>
+                            <select id="op-operator" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                <option value="+">Sumar / Concatenar (+)</option>
+                                <option value="-">Restar (-)</option>
+                                <option value="*">Multiplicar (*)</option>
+                                <option value="/">Dividir (/)</option>
+                                <option value=">">Mayor que (&gt;)</option>
+                                <option value="<">Menor que (&lt;)</option>
+                                <option value="===">Igual a (===)</option>
+                                <option value="&&">Y lógico (&amp;&amp;)</option>
+                                <option value="||">O lógico (||)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-mono text-xs text-slate-300 mb-1.5">Seleccionar Operando B</label>
+                            <select id="op-b" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors">
+                                <option value="">-- Seleccione variable o valor directo --</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <button onclick="executeOperation()" class="py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                Ejecutar en ALU
+                            </button>
+                            <button onclick="printResultToConsole()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Imprimir Resultado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consola de Escritura Estándar -->
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Consola de Escritura Estándar
+                            </h3>
+                            <button onclick="clearConsole()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Limpiar Consola
+                            </button>
+                        </div>
+
+                        <!-- Terminal Screen -->
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs h-72 overflow-y-auto space-y-2 shadow-inner" id="console-output">
+                            <div class="text-slate-500">// SYS-COMP Terminal v1.0.0 Inicializada...</div>
+                            <div class="text-slate-500">// Esperando ejecución de instrucciones...</div>
+                            <div class="text-cyan-400">[SISTEMA] Computador Virtual inicializado con éxito. Listo para procesar lógica de programación.</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                        <div>Prompt: Ready</div>
+                        <div>Encoding: UTF-8</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800/80 py-4 text-center text-xs text-slate-500 font-mono">
+        Proyecto 1: Computador Virtual & Laboratorio de Tipos de Datos — Curso de Lógica de Programación JavaScript
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // State Management
+        let ramMemory = [];
+        let lastALUResult = null;
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/25');
+                btn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/50');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/50');
+                activeBtn.classList.add('bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/25');
+            }
+
+            if (tabId === 'console') {
+                updateOperandSelects();
+            }
+        }
+
+        // Console logger
+        function logToConsole(message, type = 'system') {
+            const consoleOutput = document.getElementById('console-output');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            
+            let colorClass = 'text-cyan-400';
+            if (type === 'error') colorClass = 'text-rose-400';
+            if (type === 'success') colorClass = 'text-emerald-400';
+            if (type === 'alu') colorClass = 'text-yellow-300';
+
+            div.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="${colorClass}">${message}</span>`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '<div class="text-slate-500">// Consola limpiada por el usuario.</div>';
+        }
+
+        // Value placeholder helper for variable declaration
+        function updateValuePlaceholder() {
+            const type = document.getElementById('var-type').value;
+            const input = document.getElementById('var-value');
+            if (type === 'number') input.placeholder = 'ej. 25, 3.1416';
+            else if (type === 'string') input.placeholder = "ej. 'Hola Mundo'";
+            else if (type === 'boolean') input.placeholder = 'ej. true o false';
+        }
+
+        // Handle Variable Declaration
+        function handleDeclareVariable(e) {
+            e.preventDefault();
+            const declaration = document.getElementById('var-declaration').value;
+            const name = document.getElementById('var-name').value.trim();
+            const type = document.getElementById('var-type').value;
+            const rawValue = document.getElementById('var-value').value.trim();
+
+            // Validate and parse value according to type
+            let parsedValue;
+            try {
+                if (type === 'number') {
+                    parsedValue = Number(rawValue);
+                    if (isNaN(parsedValue)) throw new Error("Valor numérico inválido.");
+                } else if (type === 'boolean') {
+                    if (rawValue === 'true') parsedValue = true;
+                    else if (rawValue === 'false') parsedValue = false;
+                    else throw new Error("El booleano debe ser 'true' o 'false'.");
+                } else {
+                    // String: remove quotes if user added them, or keep string
+                    parsedValue = rawValue.replace(/^['"](.*)['"]$/, '$1');
+                }
+            } catch (err) {
+                logToConsole(`Error de asignación en RAM: ${err.message}`, 'error');
+                alert(`Error: ${err.message}`);
+                return;
+            }
+
+            // Check if variable already exists
+            const existingIndex = ramMemory.findIndex(item => item.name === name);
+            if (existingIndex !== -1) {
+                if (ramMemory[existingIndex].declaration === 'const') {
+                    logToConsole(`Error crítico: No se puede reasignar la constante '${name}'.`, 'error');
+                    alert(`Error: No se puede reasignar la constante '${name}'.`);
+                    return;
+                }
+                ramMemory[existingIndex] = { declaration, name, type, value: parsedValue };
+                logToConsole(`Variable '${name}' actualizada en RAM con éxito.`, 'success');
+            } else {
+                ramMemory.push({ declaration, name, type, value: parsedValue });
+                logToConsole(`Asignación elemental (=): Creada celda RAM [${declaration} ${name} = ${JSON.stringify(parsedValue)}]`, 'success');
+            }
+
+            document.getElementById('var-form').reset();
+            updateValuePlaceholder();
+            renderRAMTable();
+            updateArchitecturePreview();
+        }
+
+        // Render RAM Table
+        function renderRAMTable() {
+            const tbody = document.getElementById('ram-table-body');
+            if (ramMemory.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 italic">// Sin datos en memoria RAM. Registre variables usando el panel izquierdo.</td></tr>`;
+                document.getElementById('arch-ram-count').innerText = '0 alojadas';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            ramMemory.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/40 transition-colors';
+                
+                let badgeColor = 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+                if (item.declaration === 'const') badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+                if (item.declaration === 'var') badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+
+                tr.innerHTML = `
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-mono border ${badgeColor}">${item.declaration}</span></td>
+                    <td class="p-3 font-semibold text-white">${item.name}</td>
+                    <td class="p-3 text-slate-400">${item.type}</td>
+                    <td class="p-3 text-cyan-300 font-mono">${JSON.stringify(item.value)}</td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="editRAMItem(${index})" class="text-xs text-cyan-400 hover:underline">Modificar</button>
+                        <button onclick="deleteRAMItem(${index})" class="text-xs text-rose-400 hover:underline">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('arch-ram-count').innerText = `${ramMemory.length} alojadas`;
+        }
+
+        function deleteRAMItem(index) {
+            const removed = ramMemory.splice(index, 1);
+            logToConsole(`Liberada celda de memoria RAM para '${removed[0].name}'.`, 'system');
+            renderRAMTable();
+            updateArchitecturePreview();
+        }
+
+        function editRAMItem(index) {
+            const item = ramMemory[index];
+            if (item.declaration === 'const') {
+                alert("Advertencia: Esta es una constante (const) y no debería cambiar su valor por definición lógica.");
+            }
+            const newVal = prompt(`Nuevo valor para '${item.name}' (${item.type}):`, item.value);
+            if (newVal === null) return;
+
+            try {
+                if (item.type === 'number') {
+                    item.value = Number(newVal);
+                } else if (item.type === 'boolean') {
+                    if (newVal === 'true') item.value = true;
+                    else if (newVal === 'false') item.value = false;
+                    else throw new Error("Debe ser true o false.");
+                } else {
+                    item.value = newVal;
+                }
+                logToConsole(`Variable '${item.name}' modificada en RAM a: ${item.value}`, 'success');
+                renderRAMTable();
+                updateArchitecturePreview();
+            } catch (err) {
+                alert(`Error al modificar: ${err.message}`);
+            }
+        }
+
+        function clearMemory() {
+            ramMemory = [];
+            renderRAMTable();
+            updateArchitecturePreview();
+            logToConsole("Memoria RAM purgada por completo.", 'system');
+        }
+
+        function updateArchitecturePreview() {
+            const preview = document.getElementById('arch-ram-preview');
+            if (ramMemory.length === 0) {
+                preview.innerHTML = "// Memoria vacía. Declare variables en el laboratorio.";
+                return;
+            }
+            let html = '';
+            ramMemory.forEach(item => {
+                html += `<div>[${item.name}] = ${JSON.stringify(item.value)} <span class="text-slate-500">(${item.type})</span></div>`;
+            });
+            preview.innerHTML = html;
+        }
+
+        // Populate Operands Selects in Console Tab
+        function updateOperandSelects() {
+            const selectA = document.getElementById('op-a');
+            const selectB = document.getElementById('op-b');
+            
+            const optionsHtml = '<option value="">-- Seleccione variable o valor directo --</option>' + 
+                ramMemory.map(item => `<option value="${item.name}">[RAM] ${item.name} (${item.value})</option>`).join('') +
+                '<option value="literal_number">Número Literal (Escribir...)</option>' +
+                '<option value="literal_string">Texto Literal (Escribir...)</option>' +
+                '<option value="literal_boolean">Booleano Literal (true/false)</option>';
+
+            selectA.innerHTML = optionsHtml;
+            selectB.innerHTML = optionsHtml;
+        }
+
+        // Resolve operand value helper
+        function resolveOperandValue(selectId) {
+            const val = document.getElementById(selectId).value;
+            if (!val) return null;
+
+            // Check if it's in RAM
+            const found = ramMemory.find(item => item.name === val);
+            if (found) return found.value;
+
+            if (val === 'literal_number') {
+                const n = prompt("Ingrese un número literal:");
+                return Number(n);
+            }
+            if (val === 'literal_string') {
+                return prompt("Ingrese un texto literal:");
+            }
+            if (val === 'literal_boolean') {
+                const b = prompt("Ingrese true o false:");
+                return b === 'true';
+            }
+            return val;
+        }
+
+        // Execute Operation in ALU
+        function executeOperation() {
+            const aVal = resolveOperandValue('op-a');
+            const op = document.getElementById('op-operator').value;
+            const bVal = resolveOperandValue('op-b');
+
+            if (aVal === null || bVal === null) {
+                alert("Por favor seleccione ambos operandos correctamente.");
+                return;
+            }
+
+            document.getElementById('cpu-status-badge').innerText = 'Procesando...';
+            document.getElementById('cpu-status-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 animate-pulse';
+            document.getElementById('arch-alu-op').innerText = `${aVal} ${op} ${bVal}`;
+
+            setTimeout(() => {
+                try {
+                    let result;
+                    switch(op) {
+                        case '+': result = aVal + bVal; break;
+                        case '-': result = aVal - bVal; break;
+                        case '*': result = aVal * bVal; break;
+                        case '/': 
+                            if (bVal === 0) throw new Error("División por cero no permitida.");
+                            result = aVal / bVal; 
+                            break;
+                        case '>': result = aVal > bVal; break;
+                        case '<': result = aVal < bVal; break;
+                        case '===': result = aVal === bVal; break;
+                        case '&&': result = aVal && bVal; break;
+                        case '||': result = aVal || bVal; break;
+                        default: throw new Error("Operador no reconocido.");
+                    }
+
+                    lastALUResult = result;
+                    document.getElementById('arch-alu-acc').innerText = JSON.stringify(result);
+                    logToConsole(`ALU Ejecutado: (${JSON.stringify(aVal)} ${op} ${JSON.stringify(bVal)}) => Resultado en Acumulador: ${JSON.stringify(result)}`, 'alu');
+                } catch (err) {
+                    logToConsole(`Error en ALU: ${err.message}`, 'error');
+                    alert(`Error: ${err.message}`);
+                } finally {
+                    document.getElementById('cpu-status-badge').innerText = 'Activo / Reposo';
+                    document.getElementById('cpu-status-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                }
+            }, 300);
+        }
+
+        // Print Result to Console (Shows ALU result)
+        function printResultToConsole() {
+            if (lastALUResult === null) {
+                logToConsole("Advertencia: No hay ningún resultado reciente en el Acumulador de la ALU. Ejecute una operación primero.", 'error');
+                alert("Primero ejecute una operación en la ALU para obtener un resultado válido.");
+                return;
+            }
+            logToConsole(`[Escritura Estándar - console.log] Resultado actual en memoria: ${JSON.stringify(lastALUResult)}`, 'success');
+        }
+
+        // Simulate Instruction Cycle in Architecture tab
+        function simulateInstructionCycle() {
+            // Cambiar automáticamente a la pestaña de consola para ver los mensajes en vivo
+            switchTab('console');
+
+            logToConsole("Iniciando Ciclo de Instrucción (Fetch -> Decode -> Execute)...", 'system');
+            document.getElementById('arch-io-status').innerHTML = '<span class="text-slate-500">// Estado E/S:</span><br><span class="text-cyan-400">> Leyendo instrucción desde Memoria RAM...</span>';
+            
+            setTimeout(() => {
+                logToConsole("Ciclo [Fetch]: Instrucción cargada en el Registro de Instrucciones.", 'system');
+            }, 400);
+
+            setTimeout(() => {
+                logToConsole("Ciclo [Decode]: La Unidad de Control decodifica la operación aritmética.", 'system');
+                document.getElementById('cpu-status-badge').innerText = 'Ejecutando';
+                document.getElementById('cpu-status-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 animate-pulse';
+            }, 900);
+
+            setTimeout(() => {
+                logToConsole("Ciclo [Execute]: ALU procesó la instrucción y actualizó el Registro Acumulador.", 'success');
+                document.getElementById('arch-io-status').innerHTML = '<span class="text-slate-500">// Estado E/S:</span><br><span class="text-emerald-400">> Ciclo completado con éxito. Salida emitida.</span>';
+                document.getElementById('cpu-status-badge').innerText = 'Activo / Reposo';
+                document.getElementById('cpu-status-badge').className = 'px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            }, 1400);
+        }
+    </script>
+</body>
+</html>
