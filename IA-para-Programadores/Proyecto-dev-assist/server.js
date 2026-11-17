@@ -38,13 +38,14 @@ app.post('/api/analyze', async (req, res) => {
             3. Sugerencia de refactorización o buenas prácticas.
         `;
 
-        // Llamada al modelo Gemini
+        // Llamada al modelo Gemini con el modelo estable y alta disponibilidad
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash-lite',
             contents: fullPrompt,
         });
 
-        res.json({ success: true, analysis: response.text() });
+        // Enviar la respuesta utilizando la propiedad directa .text
+        res.json({ success: true, analysis: response.text });
 
     } catch (error) {
         console.error('Error al conectar con la API de Gemini:', error);
