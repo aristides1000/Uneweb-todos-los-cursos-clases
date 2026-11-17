@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYS-COMP 101 // Proyecto 3: Laboratorio Matemático</title>
+    <!-- Tailwind CSS v4 / CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- CABECERA INSTITUCIONAL Y ESTADÍSTICAS -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="inline-block w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold">SYS-COMP 101 // Módulo Académico III</span>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-white mt-1">Laboratorio de Automatización y Módulos Matemáticos</h1>
+            </div>
+            
+            <!-- Panel de Métricas Globales -->
+            <div class="flex items-center gap-6 bg-slate-950/80 border border-slate-800 px-4 py-2 rounded-lg text-xs font-mono">
+                <div>
+                    <span class="text-slate-500 block">ESTADO MEMORIA:</span>
+                    <span id="stat-memory" class="text-emerald-400 font-bold">Estable (By Value/Ref)</span>
+                </div>
+                <div class="border-l border-slate-800 pl-4">
+                    <span class="text-slate-500 block">TOTAL ITERACIONES:</span>
+                    <span id="stat-iterations" class="text-cyan-400 font-bold">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8 w-full flex-grow">
+        
+        <!-- COLUMNA IZQUIERDA Y CENTRO: MÓDULOS DE CÁLCULO (2 Columnas) -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- PESTAÑAS DE NAVEGACIÓN DE MÓDULOS -->
+            <div class="flex border-b border-slate-800 gap-2 font-mono text-sm">
+                <button onclick="switchModule('tab-tables')" id="btn-tab-tables" class="px-4 py-2 border-b-2 border-cyan-500 text-cyan-400 font-semibold transition-all">01. Tablas & Ciclo For</button>
+                <button onclick="switchModule('tab-savings')" id="btn-tab-savings" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all">02. Ahorros & While/Do-While</button>
+                <button onclick="switchModule('tab-arrays')" id="btn-tab-arrays" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all">03. Arreglos & Referencias</button>
+            </div>
+
+            <!-- MÓDULO 1: GENERADOR DE TABLAS Y SECUENCIAS (CICLO FOR) -->
+            <section id="tab-tables" class="space-y-6 bg-slate-900/40 border border-slate-800/80 p-6 rounded-xl backdrop-blur">
+                <div>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/30">Estructura Iterativa: For</span>
+                    <h2 class="text-lg font-bold text-white mt-2">Generador Dinámico de Tablas de Multiplicar y Secuencias</h2>
+                    <p class="text-sm text-slate-400 mt-1">Utiliza un ciclo exacto <code>for</code> para recorrer rangos numéricos y construir tablas dinámicas estructuradas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Número Base / Factor:</label>
+                        <input type="number" id="table-base" value="5" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Límite de Iteraciones (Hasta):</label>
+                        <input type="number" id="table-limit" value="10" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+
+                <button onclick="executeTableGenerator()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-semibold py-2.5 px-4 rounded text-sm transition-all cursor-pointer">
+                    Ejecutar Ciclo For & Generar Tabla
+                </button>
+
+                <!-- Contenedor de Resultados Dinámicos -->
+                <div id="table-output-container" class="mt-4 border border-slate-800 bg-slate-950 rounded-lg p-4 font-mono text-xs max-h-60 overflow-y-auto text-slate-300">
+                    <span class="text-slate-600">// Esperando ejecución de parámetros...</span>
+                </div>
+            </section>
+
+            <!-- MÓDULO 2: SIMULADOR DE AHORROS CON INTERÉS COMPUESTO (WHILE / DO-WHILE) -->
+            <section id="tab-savings" class="space-y-6 bg-slate-900/40 border border-slate-800/80 p-6 rounded-xl backdrop-blur hidden">
+                <div>
+                    <span class="text-xs font-mono text-amber-400 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/30">Estructura Iterativa: While & Do-While</span>
+                    <h2 class="text-lg font-bold text-white mt-2">Simulador de Meta de Ahorro con Interés Compuesto</h2>
+                    <p class="text-sm text-slate-400 mt-1">Evalúa procesos condicionales con bucle <code>while</code> (hasta alcanzar meta) y validación previa obligatoria simulando <code>do-while</code>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Capital Inicial ($):</label>
+                        <input type="number" id="save-capital" value="1000" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Interés Mensual (%):</label>
+                        <input type="number" id="save-rate" value="3" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 mb-1">Meta Deseada ($):</label>
+                        <input type="number" id="save-target" value="2000" class="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <button onclick="executeSavingsSimulation()" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-semibold py-2.5 px-4 rounded text-sm transition-all cursor-pointer">
+                    Simular Proyección (Bucle While)
+                </button>
+
+                <div id="savings-output-container" class="mt-4 border border-slate-800 bg-slate-950 rounded-lg p-4 font-mono text-xs max-h-60 overflow-y-auto text-slate-300">
+                    <span class="text-slate-600">// Configura los parámetros de ahorro y ejecuta la simulación...</span>
+                </div>
+            </section>
+
+            <!-- MÓDULO 3: ANALIZADOR DE ARREGLOS (VALOR VS REFERENCIA) -->
+            <section id="tab-arrays" class="space-y-6 bg-slate-900/40 border border-slate-800/80 p-6 rounded-xl backdrop-blur hidden">
+                <div>
+                    <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/30">Programación Modular & Memoria</span>
+                    <h2 class="text-lg font-bold text-white mt-2">Paso por Valor vs. Paso por Referencia en Memoria</h2>
+                    <p class="text-sm text-slate-400 mt-1">Demuestra cómo los tipos primitivos se copian por valor y los arreglos/objetos se manipulan por referencia en la memoria RAM.</p>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg font-mono text-xs space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <span class="text-slate-400">Arreglo Original en Memoria:</span>
+                        <span id="original-array-display" class="text-cyan-400 font-bold">[10, 20, 30, 40, 50]</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400">Variable Primitiva (Valor):</span>
+                        <span id="original-primitive-display" class="text-amber-400 font-bold">100</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button onclick="demonstratePassByValue()" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 py-3 px-4 rounded font-mono text-xs transition-all text-left">
+                        <strong class="block text-amber-400 mb-1">1. Probar Paso por Valor</strong>
+                        Modifica una copia local sin afectar la variable original primitiva.
+                    </button>
+                    <button onclick="demonstratePassByReference()" class="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 py-3 px-4 rounded font-mono text-xs transition-all text-left">
+                        <strong class="block text-emerald-400 mb-1">2. Probar Paso por Referencia</strong>
+                        Modifica el arreglo mediante función modular y observa el cambio en el puntero de memoria.
+                    </button>
+                </div>
+
+                <div id="memory-output-container" class="border border-slate-800 bg-slate-950 rounded-lg p-4 font-mono text-xs max-h-40 overflow-y-auto text-slate-300">
+                    <span class="text-slate-600">// Selecciona una prueba de memoria para visualizar el comportamiento de los punteros...</span>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: CONSOLA DE BITÁCORA Y DEPURACIÓN -->
+        <aside class="space-y-4 flex flex-col h-full">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col flex-grow min-h-[480px]">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
+                    <span class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span> Bitácora de Depuración
+                    </span>
+                    <button onclick="clearConsole()" class="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors">Limpiar</button>
+                </div>
+                
+                <!-- Pantalla de consola -->
+                <div id="console-output" class="bg-slate-950 border border-slate-900 rounded-lg p-3 font-mono text-xs flex-grow overflow-y-auto space-y-1.5 max-h-[500px] text-cyan-400">
+                    <div><span class="text-slate-600">[00:00:00]</span> Sistema inicializado. Módulos matemáticos listos.</div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="border-t border-slate-800 py-4 text-center text-xs font-mono text-slate-500">
+        SYS-COMP 101 // Arquitectura de Control e Ingeniería de Software Educativo
+    </footer>
+
+    <!-- SCRIPT DE LÓGICA Y MODULARIDAD -->
+    <script>
+        // Estado Global del Laboratorio
+        const labState = {
+            totalIterations: 0,
+            activeTab: 'tab-tables',
+            memoryType: 'Referencia / Valor',
+            sampleArray: [10, 20, 30, 40, 50],
+            samplePrimitive: 100
+        };
+
+        // Sistema de Registro en Consola (Bitácora)
+        function logToConsole(message, type = 'system') {
+            const consoleOutput = document.getElementById('console-output');
+            const time = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            
+            let colorClass = 'text-cyan-400';
+            if (type === 'error') colorClass = 'text-rose-400';
+            if (type === 'success') colorClass = 'text-emerald-400';
+            if (type === 'warning') colorClass = 'text-amber-400';
+
+            div.innerHTML = `<span class="text-slate-600">[${time}]</span> <span class="${colorClass}">${message}</span>`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerHTML = '<div class="text-slate-500">// Bitácora limpiada por el usuario.</div>';
+        }
+
+        // Control de Pestañas de Módulos
+        function switchModule(tabId) {
+            document.getElementById('tab-tables').classList.add('hidden');
+            document.getElementById('tab-savings').classList.add('hidden');
+            document.getElementById('tab-arrays').classList.add('hidden');
+
+            document.getElementById('btn-tab-tables').className = "px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
+            document.getElementById('btn-tab-savings').className = "px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
+            document.getElementById('btn-tab-arrays').className = "px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition-all";
+
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            if (tabId === 'tab-tables') {
+                document.getElementById('btn-tab-tables').className = "px-4 py-2 border-b-2 border-cyan-500 text-cyan-400 font-semibold transition-all";
+            } else if (tabId === 'tab-savings') {
+                document.getElementById('btn-tab-savings').className = "px-4 py-2 border-b-2 border-amber-500 text-amber-400 font-semibold transition-all";
+            } else if (tabId === 'tab-arrays') {
+                document.getElementById('btn-tab-arrays').className = "px-4 py-2 border-b-2 border-emerald-500 text-emerald-400 font-semibold transition-all";
+            }
+            
+            labState.activeTab = tabId;
+            logToConsole(`Cambio de módulo activo a: ${tabId}`, 'system');
+        }
+
+        // MÓDULO 1: CICLO FOR (Generación de Tabla)
+        function executeTableGenerator() {
+            const base = parseInt(document.getElementById('table-base').value);
+            const limit = parseInt(document.getElementById('table-limit').value);
+            const container = document.getElementById('table-output-container');
+
+            // Validación defensiva previa (Simulando validación Do-While)
+            let validationPass = true;
+            let validationMsg = "";
+            do {
+                if (isNaN(base) || isNaN(limit)) {
+                    validationMsg = "Error: Los parámetros de entrada deben ser numéricos.";
+                    validationPass = false;
+                    break;
+                }
+                if (limit <= 0 || limit > 100) {
+                    validationMsg = "Error: El límite debe estar entre 1 y 100 iteraciones.";
+                    validationPass = false;
+                    break;
+                }
+            } while (false); // Simulación de control de flujo Do-While de una sola pasada
+
+            if (!validationPass) {
+                logToConsole(`Validación Do-While fallida: ${validationMsg}`, 'error');
+                alert(validationMsg);
+                return;
+            }
+
+            let htmlOutput = `<table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-800 text-cyan-400">
+                        <th class="py-1 px-2">Iteración (i)</th>
+                        <th class="py-1 px-2">Operación</th>
+                        <th class="py-1 px-2">Resultado</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            // Estructura Iterativa Ciclo For
+            for (let i = 1; i <= limit; i++) {
+                let product = base * i;
+                htmlOutput += `<tr class="border-b border-slate-900 hover:bg-slate-900/50">
+                    <td class="py-1 px-2 text-slate-500">i = ${i}</td>
+                    <td class="py-1 px-2">${base} &times; ${i}</td>
+                    <td class="py-1 px-2 text-cyan-300 font-bold">${product}</td>
+                </tr>`;
+                labState.totalIterations++;
+            }
+
+            htmlOutput += `</tbody></table>`;
+            container.innerHTML = htmlOutput;
+            document.getElementById('stat-iterations').innerText = labState.totalIterations;
+            logToConsole(`Ciclo For ejecutado con éxito: Base ${base}, Límite ${limit} iteraciones.`, 'success');
+        }
+
+        // MÓDULO 2: CICLO WHILE (Simulador de Ahorros)
+        function executeSavingsSimulation() {
+            let capital = parseFloat(document.getElementById('save-capital').value);
+            const rate = parseFloat(document.getElementById('save-rate').value) / 100;
+            const target = parseFloat(document.getElementById('save-target').value);
+            const container = document.getElementById('savings-output-container');
+
+            if (capital >= target) {
+                alert("El capital inicial ya es mayor o igual a la meta deseada.");
+                return;
+            }
+
+            let months = 0;
+            let logHTML = `<div class="space-y-1">`;
+            
+            // Bucle While condicional
+            while (capital < target && months < 120) {
+                months++;
+                let interestEarned = capital * rate;
+                capital += interestEarned;
+                labState.totalIterations++;
+                
+                logHTML += `<div>Mes ${months}: Interés ganado $${interestEarned.toFixed(2)} | Saldo Acumulado: <span class="text-amber-400">$${capital.toFixed(2)}</span></div>`;
+            }
+
+            logHTML += `</div>`;
+            container.innerHTML = logHTML;
+            document.getElementById('stat-iterations').innerText = labState.totalIterations;
+            logToConsole(`Simulación While completada: Meta alcanzada en ${months} meses. Saldo final: $${capital.toFixed(2)}`, 'success');
+        }
+
+        // MÓDULO 3: PROGRAMACIÓN MODULAR (Valor vs Referencia)
+        // Función auxiliar pura (Paso por valor)
+        function modifyByValue(primitiveVal) {
+            primitiveVal = 999; // Modifica solo el ámbito local
+            return primitiveVal;
+        }
+
+        // Función modular (Paso por referencia)
+        function modifyByReference(arrRef) {
+            arrRef.push(99); // Modifica el objeto en memoria RAM compartida
+            arrRef[0] = 777;
+        }
+
+        function demonstratePassByValue() {
+            let localVal = labState.samplePrimitive;
+            let returnedVal = modifyByValue(localVal);
+            
+            document.getElementById('memory-output-container').innerHTML = 
+                `<strong>Prueba por Valor (Primitivos):</strong><br>` +
+                `Variable original intacta: <span class="text-amber-400">${labState.samplePrimitive}</span><br>` +
+                `Valor devuelto por función local: <span class="text-cyan-400">${returnedVal}</span><br>` +
+                `<span class="text-slate-500">// Los tipos primitivos en JS se copian por valor, aislando los datos.</span>`;
+            
+            logToConsole("Demostración de paso por valor ejecutada correctamente.", 'system');
+        }
+
+        function demonstratePassByReference() {
+            // Clonamos visualmente para mostrar el efecto en referencia
+            modifyByReference(labState.sampleArray);
+            
+            document.getElementById('original-array-display').innerText = JSON.stringify(labState.sampleArray);
+            document.getElementById('memory-output-container').innerHTML = 
+                `<strong>Prueba por Referencia (Arreglos/Objetos):</strong><br>` +
+                `El arreglo original fue mutado externamente: <span class="text-emerald-400">${JSON.stringify(labState.sampleArray)}</span><br>` +
+                `<span class="text-slate-500">// Los arrays y objetos pasan un puntero de memoria; cualquier cambio interno afecta al original.</span>`;
+            
+            logToConsole("Demostración de paso por referencia ejecutada. Arreglo mutado en memoria.", 'warning');
+        }
+    </script>
+</body>
+</html>
