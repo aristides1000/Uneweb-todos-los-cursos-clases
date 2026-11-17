@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevAssist — Asistente de IA para Programadores</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DevAssist 🤖</h1>
+            <p>Tu asistente inteligente de código, depuración y buenas prácticas</p>
+        </header>
+
+        <main class="card">
+            <div class="form-group">
+                <label for="prompt">¿Qué necesitas consultar o resolver?</label>
+                <input type="text" id="prompt" placeholder="Ej: Explícame cómo optimizar esta función o detecta posibles errores...">
+            </div>
+
+            <div class="form-group">
+                <label for="code">Fragmento de código (Opcional):</label>
+                <textarea id="code" rows="8" placeholder="// Pega tu código PHP, JavaScript o Python aquí..."></textarea>
+            </div>
+
+            <button id="btnAnalyze" onclick="analizarCodigo()">Analizar con IA</button>
+
+            <div id="loading" class="hidden">Analizando código y generando respuesta... ⏳</div>
+
+            <div class="result-container">
+                <h3>Respuesta del Asistente:</h3>
+                <div id="resultOutput" class="output-box">Esperando tu consulta...</div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
