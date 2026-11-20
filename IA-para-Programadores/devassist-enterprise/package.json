@@ -1,0 +1,29 @@
+{
+  "name": "devassist-enterprise",
+  "version": "0.1.0",
+  "description": "Plataforma de asistencia técnica inteligente sobre documentación local y PostgreSQL",
+  "main": "src/api/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/api/server.js",
+    "dev": "node --watch src/api/server.js",
+    "ingest": "node src/cli/ingest-cli.js",
+    "chat": "node src/cli/chat-cli.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "nodejs",
+    "postgresql",
+    "gemini",
+    "ai-assistant",
+    "documentation",
+    "rag"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^...",
+    "dotenv": "^16.4.7",
+    "pdf-parse": "^1.1.1",
+    "pg": "^8.13.1"
+  }
+}
