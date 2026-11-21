@@ -1,0 +1,11 @@
+- package.json
+- .env.example
+- .gitignore
+- schema.sql
+- src/db.js
+- src/gemini.js
+- src/pdf-to-md.js
+- src/docs-chat.js
+- src/sql-chat.js
+- src/app.js
+- public/index.html
