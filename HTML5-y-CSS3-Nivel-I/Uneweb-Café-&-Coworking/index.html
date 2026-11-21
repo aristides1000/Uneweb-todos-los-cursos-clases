@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Etiquetas Meta fundamentales -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Espacio de coworking y café de especialidad para estudiantes y desarrolladores en Caracas.">
+  <meta name="keywords" content="café, coworking, programación, estudio, internet rápido">
+  <meta name="author" content="Estudiante Uneweb">
+  
+  <title>Uneweb Café & Coworking | Tu espacio para crear</title>
+  
+  <!-- Integración de hoja de estilos CSS3 externa -->
+  <link rel="stylesheet" href="./css/estilos.css">
+</head>
+<body>
+
+  <!-- ENCABEZADO SEMÁNTICO -->
+  <header id="inicio">
+    <div class="contenedor">
+      <h1>Uneweb Café & Coworking</h1>
+      <p><em>El punto de encuentro donde el buen café impulsa tus líneas de código.</em></p>
+      
+      <!-- NAVEGACIÓN CON LISTA DESORDENADA Y ENLACES INTERNOS -->
+      <nav>
+        <ul>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#carta">Nuestra Carta</a></li>
+          <li><a href="#horarios">Horarios y Tarifas</a></li>
+          <li><a href="#reserva">Reservar</a></li>
+          <!-- Enlace a una segunda página HTML (Ruta relativa) -->
+          <li><a href="nosotros.html">Sobre Nosotros</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="contenedor">
+
+    <!-- SECCIÓN 1: TEXTO, FORMATO E IMÁGENES -->
+    <section id="servicios">
+      <h2>Un espacio diseñado para concentrarte</h2>
+      <p>
+        Bienvenido a <strong>Uneweb Café</strong>. Contamos con conexión de fibra óptica de alta velocidad, 
+        tomas de corriente en cada mesa y un ambiente tranquilo ideal para <mark>estudiar o trabajar en tus proyectos</mark>.
+      </p>
+
+      <blockquote cite="https://uneweb.edu.ve">
+        "La creatividad fluye mejor con una taza caliente y una buena conexión a internet."
+      </blockquote>
+
+      <!-- Imagen con etiqueta semántica figure -->
+      <figure>
+        <img src="media/portada.jpg" alt="Mesa de madera con laptop y taza de café recién servido" width="600">
+        <figcaption>Área principal de trabajo con iluminación natural.</figcaption>
+      </figure>
+
+      <h3>¿Por qué elegirnos?</h3>
+      <!-- Lista Desordenada -->
+      <ul>
+        <li>Wi-Fi simétrico de 300 Mbps sin interrupciones.</li>
+        <li>Café de especialidad tostado artesanalmente.</li>
+        <li>Salas climatizadas y sillas ergonómicas.</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- SECCIÓN 2: LISTAS ORDENADAS, DE DEFINICIÓN Y MULTIMEDIA -->
+    <section id="carta">
+      <h2>Nuestra Carta y Funcionamiento</h2>
+
+      <article>
+        <h3>Especialidades de la Casa (Lista de Definición)</h3>
+        <!-- Lista de Definición -->
+        <dl>
+          <dt><strong>Espresso Doble</strong></dt>
+          <dd>Extracción intensa de 60 ml con notas de cacao oscuro y avellana.</dd>
+
+          <dt><strong>Flat White</strong></dt>
+          <dd>Doble carga de espresso cubierta con una fina capa de leche microespumada.</dd>
+
+          <dt><strong>Cold Brew Cítrico</strong></dt>
+          <dd>Infusión en frío durante 18 horas con un toque refrescante de piel de naranja.</dd>
+        </dl>
+      </article>
+
+      <article>
+        <h3>¿Cómo reservar tu puesto? (Lista Ordenada)</h3>
+        <!-- Lista Ordenada -->
+        <ol>
+          <li>Revisa nuestra tabla de horarios disponibles más abajo.</li>
+          <li>Completa el formulario de reserva con tus datos.</li>
+          <li>Recibe tu código de acceso en tu correo electrónico.</li>
+        </ol>
+      </article>
+
+      <!-- Etiqueta Multimedia (Video con controles) -->
+      <article>
+        <h3>Conoce nuestro ambiente</h3>
+        <p>Dale play al siguiente recorrido breve por nuestras instalaciones:</p>
+        <video controls width="800" poster="media/cafe-trabajo.jpg">
+          <source src="media/ambiente.mp4" type="video/mp4">
+          Tu navegador no soporta la reproducción de video HTML5.
+        </video>
+      </article>
+    </section>
+
+    <hr>
+
+    <!-- SECCIÓN 3: TABLAS Y BORDES -->
+    <section id="horarios">
+      <h2>Horarios y Tarifas de Coworking</h2>
+      <p>Elige el plan que mejor se adapte a tu jornada de estudio o trabajo:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Plan / Turno</th>
+            <th>Días</th>
+            <th>Horario</th>
+            <th>Incluye</th>
+            <th>Tarifa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pase Mañana</td>
+            <td>Lunes a Viernes</td>
+            <td>8:00 AM - 1:00 PM</td>
+            <td>1 Café americano + Wi-Fi</td>
+            <td>$5</td>
+          </tr>
+          <tr>
+            <td>Pase Tarde</td>
+            <td>Lunes a Viernes</td>
+            <td>1:00 PM - 6:00 PM</td>
+            <td>1 Bebida fría + Wi-Fi</td>
+            <td>$5</td>
+          </tr>
+          <tr>
+            <td>Día Completo (Full)</td>
+            <td>Lunes a Sábado</td>
+            <td>8:00 AM - 6:00 PM</td>
+            <td>2 Cafés + Snack + Sala</td>
+            <td>$9</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr>
+
+    <!-- SECCIÓN 4: FORMULARIOS Y SUS ELEMENTOS -->
+    <section id="reserva">
+      <h2>Reserva tu Espacio o Contáctanos</h2>
+      <p>Completa todos los campos obligatorios marcados para asegurar tu mesa.</p>
+
+      <form action="#" method="post">
+        
+        <!-- Grupo 1: Datos personales -->
+        <fieldset>
+          <legend>Datos del Visitante</legend>
+
+          <div class="campo">
+            <label for="nombre">Nombre completo:</label><br>
+            <input type="text" id="nombre" name="nombre" placeholder="Ej. Ana Pérez" required>
+          </div>
+
+          <div class="campo">
+            <label for="correo">Correo electrónico:</label><br>
+            <input type="email" id="correo" name="correo" placeholder="correo@ejemplo.com" required>
+          </div>
+
+          <div class="campo">
+            <label for="personas">Cantidad de personas (1 a 6):</label><br>
+            <input type="number" id="personas" name="personas" min="1" max="6" value="1">
+          </div>
+        </fieldset>
+
+        <!-- Grupo 2: Detalles de la reserva -->
+        <fieldset>
+          <legend>Detalles de tu Visita</legend>
+
+          <div class="campo">
+            <label for="fecha">Fecha de visita:</label><br>
+            <input type="date" id="fecha" name="fecha" required>
+          </div>
+
+          <div class="campo">
+            <label for="plan">Selecciona tu plan:</label><br>
+            <select id="plan" name="plan">
+              <option value="manana">Pase Mañana ($5)</option>
+              <option value="tarde">Pase Tarde ($5)</option>
+              <option value="full" selected>Día Completo ($9)</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <p><strong>Modalidad de trabajo:</strong></p>
+            <input type="radio" id="individual" name="modalidad" value="individual" checked>
+            <label for="individual">Mesa individual</label><br>
+            
+            <input type="radio" id="grupal" name="modalidad" value="grupal">
+            <label for="grupal">Mesa grupal (Equipo)</label>
+          </div>
+
+          <div class="campo">
+            <input type="checkbox" id="boletin" name="boletin" value="si">
+            <label for="boletin">Deseo recibir promociones y eventos de programación.</label>
+          </div>
+
+          <div class="campo">
+            <label for="comentarios">Requerimientos adicionales:</label><br>
+            <textarea id="comentarios" name="comentarios" rows="4" cols="40" placeholder="Ej. Necesito estar cerca de un enchufe..."></textarea>
+          </div>
+        </fieldset>
+
+        <div class="acciones">
+          <button type="submit" class="btn-principal">Confirmar Reserva</button>
+          <button type="reset" class="btn-secundario">Limpiar Formulario</button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- CONTENIDO RELACIONADO (ASIDE) -->
+    <aside>
+      <h3>Dato Rápido</h3>
+      <p>
+        ¿Eres estudiante activo de <a href="https://uneweb.edu.ve" target="_blank" rel="noopener">Instituto Uneweb</a>? 
+        Presenta tu carnet digital y obtén un <strong>20% de descuento</strong> en cualquier plan.
+      </p>
+    </aside>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <div class="contenedor">
+      <p>Ubicación: Av. Principal, Edificio Tech, Piso 2 - Caracas.</p>
+      <p>
+        Contacto directo: 
+        <a href="mailto:hola@unewebcafe.com">hola@unewebcafe.com</a> | 
+        <a href="tel:+582125550199">+58 (212) 555-0199</a>
+      </p>
+      <p><small>&copy; 2026 Uneweb Café & Coworking. Proyecto práctico de HTML5 y CSS3 Nivel I.</small></p>
+      <p><a href="#inicio">Volver arriba ↑</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
