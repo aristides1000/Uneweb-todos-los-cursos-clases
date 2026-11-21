@@ -9,6 +9,8 @@ const MD_DIR = path.resolve('data/md');
 // Limpieza sencilla para ordenar líneas vacías excesivas y espacios raros
 function cleanExtractedText(rawText) {
   return rawText
+    .replace(/\u0000/g, '') // Elimina caracteres nulos que PostgreSQL rechaza en UTF-8
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // Quita otros caracteres de control invisibles
     .replace(/\r\n/g, '\n')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
