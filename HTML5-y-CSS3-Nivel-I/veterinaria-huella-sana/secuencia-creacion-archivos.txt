@@ -1,0 +1,3 @@
+index.html
+paginas/equipo.html
+styles/principal.css

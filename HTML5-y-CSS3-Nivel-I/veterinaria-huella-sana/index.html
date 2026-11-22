@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Etiquetas Meta -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Clínica veterinaria, vacunación, consultas y asesoría para mascotas en Caracas.">
+  <meta name="keywords" content="veterinaria, mascotas, perros, gatos, consultas, vacunas">
+  <meta name="author" content="Estudiante Uneweb">
+
+  <title>Huella Sana | Clínica Veterinaria y Cuidado Animal</title>
+
+  <!-- Hoja de estilos CSS3 externa -->
+  <link rel="stylesheet" href="styles/principal.css">
+</head>
+<body>
+
+  <!-- CABECERA Y MENÚ -->
+  <header id="top">
+    <div class="marco">
+      <h1>Huella Sana</h1>
+      <p><em>Salud, prevención y cariño para tu compañero de cuatro patas.</em></p>
+
+      <nav>
+        <ul>
+          <li><a href="#citas">Agendar Cita</a></li>
+          <li><a href="#servicios">Servicios y Guía</a></li>
+          <li><a href="#planes">Horarios y Tarifas</a></li>
+          <li><a href="paginas/equipo.html">Nuestro Equipo</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="marco">
+
+    <!-- SECCIÓN 1: FORMULARIO DE CONTACTO / CITA -->
+    <section id="citas">
+      <h2>Solicitud de Cita o Contacto</h2>
+      <p>Déjanos tus datos y los de tu mascota para coordinar tu atención.</p>
+
+      <form action="#" method="post">
+        <fieldset>
+          <legend>Datos del Responsable</legend>
+
+          <div class="fila-campo">
+            <label for="tutor">Nombre y apellido:</label><br>
+            <input type="text" id="tutor" name="tutor" placeholder="Ej. Carlos Mendoza" required>
+          </div>
+
+          <div class="fila-campo">
+            <label for="email-tutor">Correo electrónico:</label><br>
+            <input type="email" id="email-tutor" name="email-tutor" placeholder="ejemplo@correo.com" required>
+          </div>
+
+          <div class="fila-campo">
+            <label for="mascotas">Cantidad de mascotas (1 a 5):</label><br>
+            <input type="number" id="mascotas" name="mascotas" min="1" max="5" value="1">
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Preferencias de Atención</legend>
+
+          <div class="fila-campo">
+            <label for="fecha-cita">Fecha deseada:</label><br>
+            <input type="date" id="fecha-cita" name="fecha-cita" required>
+          </div>
+
+          <div class="fila-campo">
+            <label for="tipo-consulta">Motivo principal:</label><br>
+            <select id="tipo-consulta" name="tipo-consulta">
+              <option value="consulta">Consulta general</option>
+              <option value="vacuna" selected>Vacunación y desparasitación</option>
+              <option value="estetica">Baño y corte sanitario</option>
+            </select>
+          </div>
+
+          <div class="fila-campo">
+            <p><strong>Especie de la mascota:</strong></p>
+            <input type="radio" id="perro" name="especie" value="perro" checked>
+            <label for="perro">Perro</label><br>
+
+            <input type="radio" id="gato" name="especie" value="gato">
+            <label for="gato">Gato</label>
+          </div>
+
+          <div class="fila-campo">
+            <input type="checkbox" id="recordatorio" name="recordatorio" value="activo">
+            <label for="recordatorio">Deseo recibir recordatorios de vacunas por correo.</label>
+          </div>
+
+          <div class="fila-campo">
+            <label for="observaciones">Síntomas o comentarios:</label><br>
+            <textarea id="observaciones" name="observaciones" rows="3" cols="40" placeholder="Ej. Le toca refuerzo anual o presenta poco apetito..."></textarea>
+          </div>
+        </fieldset>
+
+        <div>
+          <button type="submit" class="boton-enviar">Enviar Solicitud</button>
+          <button type="reset" class="boton-limpiar">Borrar Campos</button>
+        </div>
+      </form>
+    </section>
+
+    <hr>
+
+    <!-- SECCIÓN 2: TEXTO, FORMATO, IMAGEN, LISTAS ORDENADA Y DE DEFINICIÓN -->
+    <section id="servicios">
+      <h2>Atención Veterinaria Cercana y Profesional</h2>
+      <p>
+        En <strong>Huella Sana</strong> trabajamos con protocolos claros para que cada visita sea tranquila. 
+        La <mark>prevención médica periódica</mark> ayuda a detectar molestias a tiempo y mejora su calidad de vida.
+      </p>
+
+      <blockquote>
+        "Cuidar su salud hoy es asegurar años de paseos y compañía."
+      </blockquote>
+
+      <figure>
+        <img src="recursos/consulta.jpg" alt="Veterinario revisando a un perro en una mesa de consulta luminosa" width="580">
+        <figcaption>Consultorio equipado para revisiones generales y controles preventivos.</figcaption>
+      </figure>
+
+      <h3>Pasos al llegar a la clínica (Lista Ordenada)</h3>
+      <ol>
+        <li>Registra tu llegada en recepción con el nombre de tu mascota.</li>
+        <li>Mantén a tu perro con correa o a tu gato en su transportadora.</li>
+        <li>Espera tu turno en la zona asignada y conversa con el médico veterinario.</li>
+      </ol>
+
+      <h3>Glosario básico de cuidado (Lista de Definición)</h3>
+      <dl>
+        <dt><strong>Desparasitación interna</strong></dt>
+        <dd>Aplicación periódica de medicamentos para controlar parásitos intestinales.</dd>
+
+        <dt><strong>Carnet de vacunación</strong></dt>
+        <dd>Registro cronológico de dosis aplicadas y fechas de próximos refuerzos.</dd>
+
+        <dt><strong>Chequeo preventivo</strong></dt>
+        <dd>Evaluación física general recomendada al menos una vez al año.</dd>
+      </dl>
+    </section>
+
+    <hr>
+
+    <!-- SECCIÓN 3: TABLA, LISTA DESORDENADA Y MULTIMEDIA (AUDIO) -->
+    <section id="planes">
+      <h2>Horarios y Tarifas de Servicios</h2>
+      <p>Consulta la disponibilidad semanal antes de confirmar tu asistencia:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Servicio</th>
+            <th>Días</th>
+            <th>Horario</th>
+            <th>Duración aprox.</th>
+            <th>Tarifa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Consulta General</td>
+            <td>Lunes a Sábado</td>
+            <td>9:00 AM - 5:00 PM</td>
+            <td>30 min</td>
+            <td>$15</td>
+          </tr>
+          <tr>
+            <td>Plan de Vacunación</td>
+            <td>Martes y Jueves</td>
+            <td>10:00 AM - 4:00 PM</td>
+            <td>20 min</td>
+            <td>$12</td>
+          </tr>
+          <tr>
+            <td>Baño e Higiene</td>
+            <td>Miércoles a Domingo</td>
+            <td>9:30 AM - 5:30 PM</td>
+            <td>60 min</td>
+            <td>$18</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Recomendaciones previas a la visita (Lista Desordenada)</h3>
+      <ul>
+        <li>Trae el historial médico o carnet si cuentas con ellos.</li>
+        <li>Evita alimentar a tu mascota justo antes de un procedimiento indicado.</li>
+        <li>Informa si el animal se estresa fácilmente con otros animales.</li>
+      </ul>
+
+      <h3>Audio informativo sobre cuidado diario</h3>
+      <p>Escucha este breve mensaje sobre rutinas saludables en casa:</p>
+      <audio controls>
+        <source src="recursos/guia-cuidado.mp3" type="audio/mpeg">
+        Tu navegador no soporta la reproducción de audio HTML5.
+      </audio>
+    </section>
+
+    <!-- INFORMACIÓN COMPLEMENTARIA -->
+    <aside>
+      <h3>Nota de Orientación</h3>
+      <p>
+        Revisa guías generales de bienestar animal en 
+        <a href="https://www.woah.org/es/" target="_blank" rel="noopener">Organización Mundial de Sanidad Animal</a> 
+        ante dudas informativas.
+      </p>
+    </aside>
+
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <div class="marco">
+      <p>Dirección: Av. Los Palos Grandes, Local 4 - Caracas.</p>
+      <p>
+        Escríbenos a <a href="mailto:citas@huellasana.com">citas@huellasana.com</a> o llama al 
+        <a href="tel:+582125550144">+58 (212) 555-0144</a>.
+      </p>
+      <p><small>&copy; 2026 Huella Sana. Práctica de HTML5 y CSS3 Nivel I.</small></p>
+      <p><a href="#top">Ir al inicio ↑</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
