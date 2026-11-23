@@ -274,6 +274,10 @@ body {
 
 .media-box video {
   width: 100%;
+  aspect-ratio: 16 / 9; /* Fija la proporción exacta antes y durante el play */
+  object-fit: cover;    /* Recorta el exceso sin aplastar ni estirar la imagen o el video */
+  object-position: center center; /* Centrado horizontal y vertical */
+  background-color: #0b0d10;
   border-radius: 4px;
   display: block;
   transition: transform 0.4s ease;
