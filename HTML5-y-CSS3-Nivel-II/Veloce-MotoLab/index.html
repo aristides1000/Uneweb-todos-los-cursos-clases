@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veloce MotoLab | Ingeniería y Personalización</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="#" class="logo">VELOCE<span>MOTOLAB</span></a>
+      <nav aria-label="Navegación principal">
+        <ul class="nav-list">
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#proyectos">Proyectos</a></li>
+          <li><a href="#telemetria">Telemetría</a></li>
+          <li><a href="#citas" class="btn-nav">Agendar Cita</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero con video de fondo en bucle + animación Keyframes -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline poster="./assets/img/banco-pruebas-poster.jpg">
+        <source src="./assets/video/motos-fondo.mp4" type="video/mp4">
+        Tu navegador no soporta videos HTML5.
+      </video>
+
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <div class="container hero-content">
+        <span class="badge-live">● Banco de pruebas activo</span>
+        <h1>Ingeniería de precisión sobre dos ruedas</h1>
+        <p>Modificación estructural, mapeo electrónico y restauración estética para motocicletas de alto rendimiento.</p>
+        <a href="#citas" class="btn-primary">Configurar proyecto</a>
+      </div>
+    </section>
+
+    <!-- Práctica 1: Flexbox Multi-columna + Variables + Pseudoelementos -->
+    <section id="servicios" class="section container">
+      <h2 class="section-title">Especialidades del Taller</h2>
+      <div class="flex-grid">
+        <article class="card">
+          <h3>Mapeo y Electrónica</h3>
+          <p>Optimización de inyección y encendido en banco dinamométrico para máxima entrega de torque.</p>
+          <span class="price-tag" data-currency="$">180</span>
+        </article>
+        <article class="card">
+          <h3>Fabricación a Medida</h3>
+          <p>Subchasis en acero cromoly, escapes en acero inoxidable y piezas mecanizadas en CNC.</p>
+          <span class="price-tag" data-currency="$">450</span>
+        </article>
+        <article class="card">
+          <h3>Pintura y Acabados</h3>
+          <p>Recubrimiento electrostático (powder coating) y aerografía personalizada con lacas cerámicas.</p>
+          <span class="price-tag" data-currency="$">320</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- Multimedia + Posicionamiento + Transformaciones -->
+    <section id="proyectos" class="section bg-alt">
+      <div class="container">
+        <h2 class="section-title">Laboratorio Multimedia</h2>
+        <div class="media-layout">
+          <figure class="media-box">
+            <span class="status-pill">Proyecto #04</span>
+            <!-- Video de muestra libre o local -->
+            <video controls poster="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80">
+              <source src="prueba-dinamometro.mp4" type="video/mp4">
+              Tu navegador no soporta la etiqueta de video HTML5.
+            </video>
+            <figcaption>Prueba de aceleración y acústica tras ajuste de válvulas.</figcaption>
+          </figure>
+
+          <aside class="audio-panel">
+            <h3>Prueba Acústica de Escape</h3>
+            <p>Escucha la diferencia de resonancia del sistema de escape titanio 4-en-1 en ralentí y corte.</p>
+            <audio controls>
+              <source src="./assets/audio/sonido-motor.mp3" type="audio/mpeg">
+              Tu navegador no soporta audio HTML5.
+            </audio>
+            <ul class="specs-list">
+              <li><strong>Motor:</strong> 4 cilindros en línea</li>
+              <li><strong>Potencia:</strong> 142 HP @ 11,500 rpm</li>
+              <li><strong>Peso final:</strong> 178 kg</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Práctica 3: Canvas HTML5 -->
+    <section id="telemetria" class="section container">
+      <h2 class="section-title">Simulador de Curva de Torque (Canvas)</h2>
+      <p class="section-desc">Haz clic dentro del panel para trazar los puntos de entrega de potencia deseados para tu motocicleta.</p>
+      <div class="canvas-wrapper">
+        <canvas id="telemetryCanvas" width="700" height="300"></canvas>
+        <button type="button" id="clearCanvas" class="btn-secondary">Reiniciar gráfico</button>
+      </div>
+    </section>
+
+    <!-- Nuevos elementos de formulario + Pseudoclases de validación -->
+    <section id="citas" class="section bg-alt">
+      <div class="container form-container">
+        <h2 class="section-title">Solicitud de Diagnóstico</h2>
+        <form class="booking-form">
+          <div class="form-group">
+            <label for="cliente">Nombre del piloto</label>
+            <input type="text" id="cliente" name="cliente" placeholder="Ej. Carlos Mendoza" required minlength="3">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="marca">Marca de motocicleta</label>
+              <input list="marcas-moto" id="marca" name="marca" placeholder="Selecciona o escribe..." required>
+              <datalist id="marcas-moto">
+                <option value="Yamaha">
+                <option value="Honda">
+                <option value="Kawasaki">
+                <option value="Ducati">
+                <option value="Suzuki">
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="cilindrada">Cilindrada (<output id="cc-val">600</output> cc)</label>
+              <input type="range" id="cilindrada" name="cilindrada" min="150" max="1300" step="50" value="600" oninput="document.getElementById('cc-val').value = this.value">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fecha">Fecha preferida</label>
+              <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="form-group">
+              <label for="hora">Hora de recepción</label>
+              <input type="time" id="hora" name="hora" min="08:00" max="17:00" required>
+            </div>
+
+            <div class="form-group">
+              <label for="color-tanque">Color base deseado</label>
+              <input type="color" id="color-tanque" name="color-tanque" value="#ff4d00">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Enviar orden de taller</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-flex">
+      <p>&copy; 2026 Veloce MotoLab. Proyecto Académico HTML5 y CSS3 Nivel II.</p>
+      <p>Caracas, Venezuela</p>
+    </div>
+  </footer>
+
+  <script src="./js/canvas.js"></script>
+</body>
+</html>

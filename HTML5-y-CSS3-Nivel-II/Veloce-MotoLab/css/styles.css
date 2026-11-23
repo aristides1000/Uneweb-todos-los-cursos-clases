@@ -1,0 +1,470 @@
+/* Variables CSS3 */
+:root {
+  --bg-dark: #0f1115;
+  --bg-surface: #181b22;
+  --bg-card: #212630;
+  --accent: #ff4d00;
+  --accent-hover: #ff6a2b;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-color: #2e3442;
+  --radius: 8px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Box Model Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.container {
+  width: 90%;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Header Sticky + Flexbox */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(15, 17, 21, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+}
+
+.nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav-list a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.nav-list a:hover {
+  color: var(--accent);
+}
+
+.btn-nav {
+  background-color: var(--accent);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.btn-nav:hover {
+  background-color: var(--accent-hover);
+  color: #fff !important;
+}
+
+/* Hero + Keyframes (Práctica 2) */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 0;
+  min-height: 460px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0; /* equivale a top: 0; right: 0; bottom: 0; left: 0; */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 13, 16, 0.72) 0%,
+    rgba(15, 17, 21, 0.85) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  animation: fadeSlideUp 0.8s ease-out forwards;
+}
+
+.badge-live {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  background-color: rgba(255, 77, 0, 0.15);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: pulseGlow 2s infinite;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.15;
+  max-width: 800px;
+}
+
+.hero p {
+  color: var(--text-muted);
+  max-width: 600px;
+  font-size: 1.1rem;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 0, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 77, 0, 0); }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Secciones y Pseudoelementos */
+.section {
+  padding: 4.5rem 0;
+}
+
+.bg-alt {
+  background-color: var(--bg-surface);
+}
+
+.section-title {
+  font-size: 1.9rem;
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 3px;
+  background-color: var(--accent);
+  margin-top: 0.4rem;
+}
+
+/* Práctica 1: Flexbox Multi-columna + Transformaciones */
+.flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.card {
+  flex: 1 1 300px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+}
+
+/* Pseudoclases estructurales */
+.card:nth-child(even) {
+  border-top: 3px solid var(--accent);
+}
+
+.price-tag {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.price-tag::before {
+  content: "Desde " attr(data-currency);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* Multimedia y Posicionamiento */
+.media-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.media-box {
+  flex: 2 1 450px;
+  position: relative;
+  background-color: var(--bg-card);
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.status-pill {
+  position: absolute;
+  top: 1.75rem;
+  left: 1.75rem;
+  z-index: 10;
+  background-color: var(--accent);
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.media-box video {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.media-box:hover video {
+  transform: scale(1.02);
+}
+
+.media-box figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.audio-panel {
+  flex: 1 1 300px;
+  background-color: var(--bg-card);
+  padding: 1.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.audio-panel audio {
+  width: 100%;
+}
+
+.specs-list {
+  list-style: none;
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+.specs-list li {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+
+/* Canvas (Práctica 3) */
+.section-desc {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+#telemetryCanvas {
+  background-color: #12151c;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  max-width: 100%;
+  cursor: crosshair;
+}
+
+/* Formulario Avanzado y Pseudoclases */
+.form-container {
+  max-width: 750px;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-group {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group:focus-within label {
+  color: var(--accent);
+}
+
+input[type="text"],
+input[list],
+input[type="date"],
+input[type="time"] {
+  padding: 0.7rem;
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+input:required:valid {
+  border-left: 3px solid #10b981;
+}
+
+input[type="color"] {
+  width: 100%;
+  height: 42px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+  margin-top: 0.6rem;
+}
+
+/* Botones */
+.btn-primary, .btn-secondary {
+  padding: 0.85rem 1.75rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+}
+
+/* Footer */
+.site-footer {
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-flex {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Diseño Responsive (Práctica 4) */
+@media (max-width: 768px) {
+  .nav-wrapper {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .hero {
+    padding: 4rem 0;
+  }
+}
