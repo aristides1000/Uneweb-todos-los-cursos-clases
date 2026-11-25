@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KronoLab | Archivo de Horología y Mecánica</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Navegación Lateral Fija en Escritorio -->
+    <header class="side-nav">
+      <div class="brand-block">
+        <span class="serial-code">EST. 1924 // GENÈVE</span>
+        <a href="#" class="logo">KRONO<span>LAB</span></a>
+      </div>
+
+      <nav aria-label="Navegación principal">
+        <ul class="nav-links">
+          <li><a href="#inicio">01. Manifiesto</a></li>
+          <li><a href="#acustica">02. Archivo Sonoro</a></li>
+          <li><a href="#simulador">03. Banco de Engranajes</a></li>
+          <li><a href="#tasacion">04. Tasación y Piezas</a></li>
+        </ul>
+      </nav>
+
+      <aside class="nav-status">
+        <span class="pulse-dot"></span>
+        <p>Sala de restauración abierta<br><small>28,800 alt/hora</small></p>
+      </aside>
+    </header>
+
+    <!-- Contenido Principal a la Derecha -->
+    <main class="main-content">
+
+      <!-- 1. Hero Asimétrico con Reloj Animado por Keyframes (Práctica 2) -->
+      <section id="inicio" class="hero-split">
+        <div class="hero-text">
+          <p class="eyebrow">EXPOSICIÓN PERMANENTE &amp; TALLER</p>
+          <h1>La arquitectura invisible del tiempo mecánico</h1>
+          <p class="lead">Estudio, conservación y registro acústico de calibres históricos, escapes de áncora y complicaciones astronómicas.</p>
+          <div class="hero-actions">
+            <a href="#simulador" class="btn-gold">Probar tren de engranajes</a>
+            <a href="#tasacion" class="btn-outline">Solicitar peritaje</a>
+          </div>
+        </div>
+
+        <!-- Reloj construido con CSS3 + Keyframes -->
+        <div class="clock-showcase" aria-hidden="true">
+          <div class="watch-bezel">
+            <div class="watch-dial">
+              <span class="marker m-12">XII</span>
+              <span class="marker m-3">III</span>
+              <span class="marker m-6">VI</span>
+              <span class="marker m-9">IX</span>
+              <div class="hand hour-hand"></div>
+              <div class="hand second-hand"></div>
+              <div class="center-pin"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Sección Multimedia (Audio arriba + Video con etiqueta posicionada) -->
+      <section id="acustica" class="section-block">
+        <div class="section-header">
+          <h2>Laboratorio Acústico y Visual</h2>
+          <p>Registro de frecuencia de escape y movimiento continuo del volante.</p>
+        </div>
+
+        <!-- Reproductor de Audio horizontal destacado -->
+        <article class="audio-strip">
+          <div class="audio-info">
+            <span class="tag-frequency">4 Hz · 28,800 vph</span>
+            <h3>Calibre K-09 — Escape de Áncora Suizo</h3>
+            <p>Grabación directa con micrófono de contacto sobre puente de volante.</p>
+          </div>
+          <audio controls>
+            <source src="./assets/audio/escape-suizo.mp3" type="audio/mpeg">
+            Tu navegador no soporta audio HTML5.
+          </audio>
+        </article>
+
+        <!-- Video en 2 columnas: Video + Ficha técnica -->
+        <div class="video-split">
+          <figure class="video-frame">
+            <span class="corner-label">CÁMARA MACRO</span>
+            <video controls muted loop poster="./assets/img/calibre-poster.jpg">
+              <source src="./assets/video/tourbillon-loop.mp4" type="video/mp4">
+              Tu navegador no soporta video HTML5.
+            </video>
+            <figcaption>Oscilación de espiral Breguet y tren de rodaje en cámara lenta.</figcaption>
+          </figure>
+
+          <div class="tech-notes">
+            <h3>Especificaciones del Mecanismo</h3>
+            <ul>
+              <li><span>Reserva de marcha:</span> 72 horas</li>
+              <li><span>Rubíes sintéticos:</span> 31 joyas</li>
+              <li><span>Material de caja:</span> Acero 904L cepillado</li>
+              <li><span>Desviación diaria:</span> -1 / +2 seg</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Canvas Interactivo: Tren de Engranajes Giratorios (Práctica 3) -->
+      <section id="simulador" class="section-block alt-surface">
+        <div class="section-header">
+          <h2>Simulador de Tren de Engranajes (Canvas)</h2>
+          <p>Controla la velocidad de rotación, invierte el sentido o pasa el cursor sobre los dientes para generar chispas de fricción.</p>
+        </div>
+
+        <div class="canvas-panel">
+          <canvas id="gearsCanvas" width="760" height="320"></canvas>
+
+          <div class="canvas-controls">
+            <label for="rpmRange">Velocidad de giro: <output id="rpmOut">1.0</output>x</label>
+            <input type="range" id="rpmRange" min="0" max="4" step="0.2" value="1">
+            <button type="button" id="reverseBtn" class="btn-outline">Invertir sentido</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Layout Dual Invertido: Formulario a la izquierda + Tarjetas Flexbox a la derecha (Práctica 1 + Formularios) -->
+      <section id="tasacion" class="section-block">
+        <div class="dual-columns">
+
+          <!-- Columna Izquierda: Formulario Avanzado HTML5 -->
+          <div class="form-column">
+            <h2>Registro de Pieza para Peritaje</h2>
+            <p class="sub-text">Completa los datos técnicos del reloj para agendar revisión en taller.</p>
+
+            <form class="appraisal-form">
+              <div class="field">
+                <label for="propietario">Nombre del coleccionista</label>
+                <input type="text" id="propietario" name="propietario" placeholder="Ej. Elena Valdés" required minlength="3">
+              </div>
+
+              <div class="field-pair">
+                <div class="field">
+                  <label for="manufactura">Manufactura / Marca</label>
+                  <input list="marcas-reloj" id="manufactura" name="manufactura" placeholder="Selecciona o escribe..." required>
+                  <datalist id="marcas-reloj">
+                    <option value="Omega">
+                    <option value="Jaeger-LeCoultre">
+                    <option value="Longines">
+                    <option value="Seiko">
+                    <option value="Tissot">
+                  </datalist>
+                </div>
+
+                <div class="field">
+                  <label for="anio">Año estimado (<output id="yearOut">1968</output>)</label>
+                  <input type="range" id="anio" name="anio" min="1900" max="2026" step="1" value="1968" oninput="document.getElementById('yearOut').value = this.value">
+                </div>
+              </div>
+
+              <div class="field-pair">
+                <div class="field">
+                  <label for="fecha-entrega">Fecha de recepción</label>
+                  <input type="date" id="fecha-entrega" name="fecha-entrega" required>
+                </div>
+
+                <div class="field">
+                  <label for="hora-cita">Bloque horario</label>
+                  <input type="time" id="hora-cita" name="hora-cita" min="09:00" max="17:00" required>
+                </div>
+
+                <div class="field">
+                  <label for="correa-color">Tono de correa</label>
+                  <input type="color" id="correa-color" name="correa-color" value="#b8860b">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-gold">Registrar solicitud</button>
+            </form>
+          </div>
+
+          <!-- Columna Derecha: Tarjetas de Servicios en Flexbox (Práctica 1) -->
+          <div class="cards-column">
+            <h2>Servicios de Taller</h2>
+            <div class="stacked-cards">
+              <article class="service-item">
+                <div>
+                  <h3>Servicio Completo de Calibre</h3>
+                  <p>Desmontaje total, limpieza ultrasónica, aceitado sintético y ajuste en 5 posiciones.</p>
+                </div>
+                <span class="cost" data-currency="USD ">240</span>
+              </article>
+
+              <article class="service-item">
+                <div>
+                  <h3>Restauración de Esfera y Agujas</h3>
+                  <p>Recuperación de índices aplicados, relumeado y pulido de cristal de zafiro o plexiglás.</p>
+                </div>
+                <span class="cost" data-currency="USD ">160</span>
+              </article>
+
+              <article class="service-item">
+                <div>
+                  <h3>Certificación Cronométrica</h3>
+                  <p>Prueba de marcha durante 72 horas y medición de amplitud e isocronismo.</p>
+                </div>
+                <span class="cost" data-currency="USD ">95</span>
+              </article>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <footer class="main-footer">
+        <p>&copy; 2026 KronoLab Horología. Proyecto II — HTML5 y CSS3 Nivel II.</p>
+        <p>Maquetación Asimétrica · Flexbox · Canvas Animado</p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="./js/gears-canvas.js"></script>
+</body>
+</html>
